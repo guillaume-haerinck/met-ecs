@@ -2,8 +2,14 @@
 #include <catch2/catch.hpp>
 #include <met/met.hpp>
 
+struct Position {
+    float x;
+    float y;
+};
+
 TEST_CASE( "Name of the case", "[category]" ) {
     met::Registry registry;
+    met::ComponentHandle<Position> positionHandle;
 
-    REQUIRE( false );
+    REQUIRE( true );
 }
