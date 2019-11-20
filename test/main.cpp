@@ -9,7 +9,7 @@ struct Position {
 
 TEST_CASE( "Name of the case", "[category]" ) {
     met::Registry registry;
-    met::ComponentHandle<Position> positionHandle;
+    registry.assign<Position>(0);
 
     REQUIRE( true );
 }
