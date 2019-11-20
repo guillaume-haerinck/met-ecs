@@ -13,6 +13,7 @@ namespace met {
     class IComponentHandle {
         public:
             IComponentHandle() {};
+            virtual ~IComponentHandle() {};
     };
 
     /**
@@ -22,6 +23,7 @@ namespace met {
     class ComponentHandle : public IComponentHandle {
     public:
         ComponentHandle() {};
+        virtual ~ComponentHandle() {};
 
     public:
         std::array<T, 24> components;
@@ -39,20 +41,32 @@ namespace met {
             }
         }
 
+        /**
+         * @brief Create a new entity
+         */
         entity create() {
             return 0;
         }
 
+        /**
+         * @brief Assign the given components to the given entity
+         */
         template<typename T>
         void assign(entity id) {
             auto test = new ComponentHandle<T>();
             m_componentHandles.push_back(test);
         }
 
+        /**
+         * @brief Get the entities which holds at least each of the given components
+         */
         template<typename T>
         void view() {
-            // TODO get component handle corresponding to T
+            
         }
+
+        // TODO how to get raw data of each component handle from here ?
+        // Use iterator pattern ? But how to determine return type ?
 
     private:
         uint32_t m_entityCount;

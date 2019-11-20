@@ -10,6 +10,7 @@ struct Position {
 TEST_CASE( "Name of the case", "[category]" ) {
     met::Registry registry;
     registry.assign<Position>(0);
+    registry.view<Position>();
 
     REQUIRE( true );
 }
