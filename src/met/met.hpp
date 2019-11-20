@@ -22,7 +22,9 @@ namespace met {
     template<class T>
     class ComponentContainer : public IComponentContainer {
     public:
-        ComponentContainer() {};
+        ComponentContainer(T data) {
+            components.fill(data);
+        };
         virtual ~ComponentContainer() {};
 
     public:
@@ -49,8 +51,9 @@ namespace met {
          * @brief Assign the given components to the given entity
          */
         template<typename T>
-        void assign(entity id) {
-
+        void assign(entity id, T data) {
+            auto test = new ComponentContainer<T>(data);
+            m_componentContainers.push_back(test);
         }
 
         /**

@@ -11,8 +11,11 @@ struct Position {
 
 TEST_CASE( "Name of the case", "[category]" ) {
     met::Registry registry;
-    registry.assign<Position>(0);
-    registry.view<Position>();
+    Position pos;
+    pos.x = 2;
+    pos.y = 3;
+
+    registry.assign<Position>(0, pos);
     auto test = registry.get<Position>();
 
     std::cout << test.x << " " << test.y << std::endl;
