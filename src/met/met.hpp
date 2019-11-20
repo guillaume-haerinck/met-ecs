@@ -10,20 +10,20 @@ namespace met {
     /**
      * @brief 
      */
-    class IComponentHandle {
+    class IComponentContainer {
         public:
-            IComponentHandle() {};
-            virtual ~IComponentHandle() {};
+            IComponentContainer() {};
+            virtual ~IComponentContainer() {};
     };
 
     /**
      * @brief 
      */
-    template <class T>
-    class ComponentHandle : public IComponentHandle {
+    template<class T>
+    class ComponentContainer : public IComponentContainer {
     public:
-        ComponentHandle() {};
-        virtual ~ComponentHandle() {};
+        ComponentContainer() {};
+        virtual ~ComponentContainer() {};
 
     public:
         std::array<T, 24> components;
@@ -36,9 +36,6 @@ namespace met {
     public:
         Registry() {}
         ~Registry() {
-            for (auto handle : m_componentHandles) {
-                delete handle;
-            }
         }
 
         /**
@@ -53,8 +50,7 @@ namespace met {
          */
         template<typename T>
         void assign(entity id) {
-            auto test = new ComponentHandle<T>();
-            m_componentHandles.push_back(test);
+
         }
 
         /**
@@ -65,11 +61,17 @@ namespace met {
             
         }
 
-        // TODO how to get raw data of each component handle from here ?
-        // Use iterator pattern ? But how to determine return type ?
+        /**
+         * @brief Get the given components for the given entity
+         */
+        // FIXME
+        template<typename T>
+        T get() {
+            return reinterpret_cast<ComponentContainer<T>*>(m_componentContainers.at(0))->components.at(0);
+        }
 
     private:
         uint32_t m_entityCount;
-        std::vector<IComponentHandle*> m_componentHandles;
+        std::vector<IComponentContainer*> m_componentContainers;
     };
 }
