@@ -60,17 +60,19 @@ namespace met {
         /**
          * @brief Assign the given components to the given entity
          */
+        // TODO check that it works
         template<typename T>
         void assign(entity id, T component) {
             const std::type_info& type = typeid(T);
 
             if (m_componentCollectionIndices.find(type.name()) != m_componentCollectionIndices.end()) {
-                unsigned int componentCollectionIndex = m_componentCollectionIndices[type.name()];
-                // m_componentCollections.at(componentCollectionIndex)->components.at(id) = component;
+                unsigned int index = m_componentCollectionIndices[type.name()];
+                ComponentCollection<T>* collection = reinterpret_cast<ComponentCollection<T>*>(m_componentCollections.at(index));
+                collection->components.at(id) = component;
             } else {
                 ComponentCollection<T>* collection = new ComponentCollection<T>(component);
                 m_componentCollections.push_back(collection);
-                m_componentCollectionIndices[type.name()] = static_cast<unsigned int>(m_componentCollections.size());
+                m_componentCollectionIndices[type.name()] = static_cast<unsigned int>(m_componentCollections.size() - 1);
             }
         }
 
@@ -90,10 +92,11 @@ namespace met {
         T get(entity id) {
             const std::type_info& type = typeid(T);
             if (m_componentCollectionIndices.find(type.name()) != m_componentCollectionIndices.end()) {
-                return reinterpret_cast<ComponentCollection<T>*>(m_componentCollections.at(0))->components.at(id);
+                unsigned int index = m_componentCollectionIndices[type.name()];
+                return reinterpret_cast<ComponentCollection<T>*>(m_componentCollections.at(index))->components.at(id);
             }
-            // TODO throw an exeption ?
-            assert(false && "Test");
+            // TODO throw an exception ?
+            assert(false && "The entity does not have the asked component");
         }
 
     private:
