@@ -10,8 +10,13 @@ namespace met {
      */
     class IComponentCollection {
         public:
-            IComponentCollection() {};
+            IComponentCollection() {
+                hasComponent.fill(false);
+            };
             virtual ~IComponentCollection() {};
+
+        public:
+            std::array<bool, MAX_ENTITIES> hasComponent; // Does the entity at this index use this component ?
     };
 
     /**

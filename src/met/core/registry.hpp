@@ -13,7 +13,10 @@ namespace met {
      */
     class Registry {
     public:
-        Registry() : m_entityCount(0) {}
+        Registry() : m_entityCount(0) {
+            m_componentCollections.reserve(MIN_COMPONENT_TYPES);
+        }
+
         ~Registry() {
             for (const auto& componentCollection : m_componentCollections) {
                 delete componentCollection;
@@ -28,21 +31,45 @@ namespace met {
         }
 
         /**
+         * @brief Destroy an entity and all of its components
+         */
+        void destroy(entity id) {
+
+        }
+
+        /**
          * @brief Assign the given components to the given entity
          */
         template<typename T>
         void assign(entity id, T component) {
             const std::type_info& type = typeid(T);
+            const bool collectionExist = m_componentCollectionIndices.find(type.name()) != m_componentCollectionIndices.end();
 
-            if (m_componentCollectionIndices.find(type.name()) != m_componentCollectionIndices.end()) {
+            if (collectionExist) {
                 unsigned int index = m_componentCollectionIndices[type.name()];
                 ComponentCollection<T>* collection = reinterpret_cast<ComponentCollection<T>*>(m_componentCollections.at(index));
                 collection->components.at(id) = component;
+                collection->hasComponent.at(id) = true;
             } else {
                 ComponentCollection<T>* collection = new ComponentCollection<T>(component);
                 m_componentCollections.push_back(collection);
                 m_componentCollectionIndices[type.name()] = static_cast<unsigned int>(m_componentCollections.size() - 1);
             }
+        }
+
+        /**
+         * @brief Remove the given components from the given entity
+         */
+        template<typename T>
+        void remove(entity id) {
+
+        }
+
+        /**
+         * @brief Destroy all of the components and all of the entities
+         */
+        void reset() {
+
         }
 
         /**
@@ -56,9 +83,8 @@ namespace met {
         /**
          * @brief Get the given components for the given entity
          */
-        // TODO return reference to allow modification
         template<typename T>
-        T get(entity id) {
+        T& get(entity id) {
             const std::type_info& type = typeid(T);
             if (m_componentCollectionIndices.find(type.name()) != m_componentCollectionIndices.end()) {
                 unsigned int index = m_componentCollectionIndices[type.name()];
@@ -70,8 +96,8 @@ namespace met {
 
     private:
         uint32_t m_entityCount;
-        std::vector<IComponentCollection*> m_componentCollections;
         std::vector<entity> m_deletedEntites;
-        std::unordered_map<std::string, unsigned int> m_componentCollectionIndices;
+        std::vector<IComponentCollection*> m_componentCollections;
+        std::unordered_map<std::string, unsigned int> m_componentCollectionIndices; 
     };
 }

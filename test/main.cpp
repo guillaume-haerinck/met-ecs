@@ -25,10 +25,11 @@ TEST_CASE( "Name of the case", "[category]" ) {
     auto entity2 = registry.create();
     registry.assign<Position>(entity2, pos);
 
-    auto storedPos1 = registry.get<Position>(entity);
+    auto& storedPos1 = registry.get<Position>(entity);
+    storedPos1.x = 200;
     std::cout << storedPos1.x << " " << storedPos1.y << std::endl;
 
-    auto storedPos2 = registry.get<Position>(entity2);
+    auto& storedPos2 = registry.get<Position>(entity2);
     std::cout << storedPos2.x << " " << storedPos2.y << std::endl;
 
     REQUIRE( true );
