@@ -3,19 +3,27 @@
 #include "../config/config.hpp"
 
 namespace met {
+    template<typename T>
+    void Func1(T&& Arg2){
+        Arg2();
+    }
+
     /**
      * @brief Collection of components of multiple types associated to multiple entities
      */
     class View {
     public:
-        View();
-        ~View();
+        View() {};
+        ~View() {};
 
-        // TODO use an iterator ? As another way to traverse the view
-
-        // TODO take a lambda function as parameter
-        void each() {
-
+        /**
+         * @brief 
+         */
+        template<typename Func>
+        void each(Func&& lambda) {
+            for (size_t i = 0; i < 5; i++) {
+                lambda();
+            }
         }
     };
 }
