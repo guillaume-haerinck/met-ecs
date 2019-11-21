@@ -6,6 +6,7 @@
 
 #include "../config/config.hpp"
 #include "component-collection.hpp"
+#include "view.hpp"
 
 namespace met {
     /**
@@ -61,10 +62,33 @@ namespace met {
         }
 
         /**
+         * @brief Says wether the entity has the given component or not
+         */
+        template<typename T>
+        bool has(entity id) {
+            return true;
+        }
+
+        /**
+         * @brief Says if the entity exist
+         */
+        bool valid(entity id) {
+
+        }
+
+        /**
          * @brief Remove the given components from the given entity
          */
         template<typename T>
         void remove(entity id) {
+
+        }
+
+        /**
+         * @brief Removes all of the components from the given entity
+         */
+        template<typename T>
+        void reset(entity id) {
 
         }
 
@@ -76,15 +100,16 @@ namespace met {
         }
 
         /**
-         * @brief Get the entities which holds at least each one of the given components
+         * @brief Get the entities which holds at least each one of the asked components
          */
         template<typename T>
-        void view() {
-            
+        View view(entity id) {
+            View view;
+            return view;
         }
 
         /**
-         * @brief Get the given components for the given entity
+         * @brief Get the asked component for the given entity
          */
         template<typename T>
         T& get(entity id) {
