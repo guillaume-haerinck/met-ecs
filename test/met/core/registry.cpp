@@ -25,14 +25,25 @@ SCENARIO( "registry is supposed to handle entities and components", "[registry]"
         }
         WHEN( "we assign a component" ) {
             met::entity entity = registry.create();
-            Position pos = { 5, 6 };
+            const Position pos = { 5, 6 };
             registry.assign<Position>(entity, pos);
 
-            THEN( "we should be able to get it back and modify it" ) {
-                Position& storedPos = registry.get<Position>(entity);
+            THEN( "we should be able to get it back" ) {
+                const Position storedPos = registry.get<Position>(entity);
 
                 REQUIRE( storedPos.x == pos.x );
                 REQUIRE( storedPos.y == pos.y );
+            }
+
+            THEN( "we should be able to modify it" ) {
+                Position& storedPos = registry.get<Position>(entity);
+                storedPos.x = 8;
+                storedPos.y = 15;
+
+                const Position storedPosCheck = registry.get<Position>(entity);
+
+                REQUIRE( storedPos.x == storedPosCheck.x );
+                REQUIRE( storedPos.y == storedPosCheck.y );
             }
         }
     }
