@@ -4,7 +4,7 @@
 #include <unordered_map>
 #include <typeinfo>
 
-#include "../met-config.hpp"
+#include "../config/config.hpp"
 #include "component-collection.hpp"
 
 namespace met {
@@ -93,8 +93,7 @@ namespace met {
                 unsigned int index = m_componentCollectionIndices[type.name()];
                 return reinterpret_cast<ComponentCollection<T>*>(m_componentCollections.at(index))->components.at(id);
             }
-            // TODO throw an exception ?
-            assert(false && "The entity does not have the asked component");
+            assert(false && "The entity does not have the required component(s)");
         }
 
     private:

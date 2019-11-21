@@ -2,7 +2,7 @@
 
 #include <array>
 
-#include "../met-config.hpp"
+#include "../config/config.hpp"
 
 namespace met {
     /**
