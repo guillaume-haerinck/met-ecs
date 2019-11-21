@@ -97,8 +97,8 @@ namespace met {
         }
 
     private:
-        uint32_t m_entityCount;
-        std::vector<entity> m_deletedEntites;
+        entity m_entityCount;
+        std::vector<entity> m_unusedIndices;
         std::vector<IComponentCollection*> m_componentCollections;
         std::unordered_map<std::string, unsigned int> m_componentCollectionIndices; 
     };
