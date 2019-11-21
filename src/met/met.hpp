@@ -4,31 +4,33 @@
 #include <vector>
 #include <unordered_map>
 
+#define MAX_ENTITIES 32
+
 namespace met {
     using entity = uint32_t;
 
     /**
-     * @brief 
+     * @brief Abstract class used to store an array of ComponentCollections
      */
-    class IComponentContainer {
+    class IComponentCollection {
         public:
-            IComponentContainer() {};
-            virtual ~IComponentContainer() {};
+            IComponentCollection() {};
+            virtual ~IComponentCollection() {};
     };
 
     /**
-     * @brief 
+     * @brief Store an array of component of the same type
      */
     template<class T>
-    class ComponentContainer : public IComponentContainer {
+    class ComponentCollection : public IComponentCollection {
     public:
-        ComponentContainer(T data) {
-            components.fill(data);
+        ComponentCollection(T firstComponent) {
+            components.at(1) = firstComponent;
         };
-        virtual ~ComponentContainer() {};
+        virtual ~ComponentCollection() {};
 
     public:
-        std::array<T, 24> components;
+        std::array<T, MAX_ENTITIES> components;
     };
 
     /**
@@ -36,15 +38,18 @@ namespace met {
      */
     class Registry {
     public:
-        Registry() {}
+        Registry() : m_entityCount(0) {}
         ~Registry() {
+            for (const auto& componentCollection : m_ComponentCollections) {
+                delete componentCollection;
+            }
         }
 
         /**
          * @brief Create a new entity
          */
         entity create() {
-            return 0;
+            return ++m_entityCount;
         }
 
         /**
@@ -52,8 +57,8 @@ namespace met {
          */
         template<typename T>
         void assign(entity id, T data) {
-            auto test = new ComponentContainer<T>(data);
-            m_componentContainers.push_back(test);
+            ComponentCollection<T>* collection = new ComponentCollection<T>(data);
+            m_ComponentCollections.push_back(collection);
         }
 
         /**
@@ -67,14 +72,14 @@ namespace met {
         /**
          * @brief Get the given components for the given entity
          */
-        // FIXME
+        // TODO return reference to allow modification
         template<typename T>
-        T get() {
-            return reinterpret_cast<ComponentContainer<T>*>(m_componentContainers.at(0))->components.at(0);
+        T get(entity id) {
+            return reinterpret_cast<ComponentCollection<T>*>(m_ComponentCollections.at(0))->components.at(id);
         }
 
     private:
         uint32_t m_entityCount;
-        std::vector<IComponentContainer*> m_componentContainers;
+        std::vector<IComponentCollection*> m_ComponentCollections;
     };
 }
