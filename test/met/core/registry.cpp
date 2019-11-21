@@ -9,7 +9,7 @@ struct Position {
 };
 
 SCENARIO( "registry is supposed to handle entities and components", "[registry]" ) {
-    GIVEN( "An empty registry") {
+    GIVEN( "An empty registry" ) {
         met::Registry registry;
 
         WHEN( "we ask for new entities" ) {
