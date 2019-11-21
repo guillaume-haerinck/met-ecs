@@ -25,6 +25,8 @@ TEST_CASE( "Name of the case", "[category]" ) {
     auto entity2 = registry.create();
     registry.assign<Position>(entity2, pos);
 
+    bool test = (entity2 == met::null_entity);
+
     auto& storedPos1 = registry.get<Position>(entity);
     storedPos1.x = 200;
     std::cout << storedPos1.x << " " << storedPos1.y << std::endl;

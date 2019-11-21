@@ -27,9 +27,7 @@ namespace met {
     template<class T>
     class ComponentCollection : public IComponentCollection {
     public:
-        ComponentCollection(T firstComponent) {
-            components.at(1) = firstComponent;
-        };
+        ComponentCollection() {};
         virtual ~ComponentCollection() {};
 
     public:

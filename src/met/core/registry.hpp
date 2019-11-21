@@ -51,7 +51,10 @@ namespace met {
                 collection->components.at(id) = component;
                 collection->hasComponent.at(id) = true;
             } else {
-                ComponentCollection<T>* collection = new ComponentCollection<T>(component);
+                ComponentCollection<T>* collection = new ComponentCollection<T>();
+                collection->components.at(id) = component;
+                collection->hasComponent.at(id) = true;
+
                 m_componentCollections.push_back(collection);
                 m_componentCollectionIndices[type.name()] = static_cast<unsigned int>(m_componentCollections.size() - 1);
             }

@@ -8,4 +8,7 @@
     #define MIN_COMPONENT_TYPES 10
 #endif
 
-using entity = unsigned int;
+namespace met {
+    using entity = unsigned int;
+    const static entity null_entity = 0;
+}
