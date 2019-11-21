@@ -1,4 +1,4 @@
-[![Actions Status](https://github.com/guillaume-haerinck/met-ecs/workflows/C++ CI/badge.svg)](https://github.com/guillaume-haerinck/met-ecs/actions)
+![Actions Status](https://github.com/guillaume-haerinck/met-ecs/workflows/C%2B%2B%20CI/badge.svg)](https://github.com/guillaume-haerinck/met-ecs/actions)
 
 # MET ECS
 
