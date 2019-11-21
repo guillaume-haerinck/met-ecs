@@ -3,8 +3,11 @@
 #include <array>
 #include <vector>
 #include <unordered_map>
+#include <typeinfo>
 
-#define MAX_ENTITIES 32
+#ifndef MAX_ENTITIES
+    #define MAX_ENTITIES 32
+#endif
 
 namespace met {
     using entity = uint32_t;
@@ -20,6 +23,8 @@ namespace met {
 
     /**
      * @brief Store an array of component of the same type
+     * 
+     * @note The index of the array corresponds to entity id. It works like a LUT
      */
     template<class T>
     class ComponentCollection : public IComponentCollection {
@@ -34,13 +39,13 @@ namespace met {
     };
 
     /**
-     * @brief 
+     * @brief The global data handler and entry point of this library
      */
     class Registry {
     public:
         Registry() : m_entityCount(0) {}
         ~Registry() {
-            for (const auto& componentCollection : m_ComponentCollections) {
+            for (const auto& componentCollection : m_componentCollections) {
                 delete componentCollection;
             }
         }
@@ -56,13 +61,21 @@ namespace met {
          * @brief Assign the given components to the given entity
          */
         template<typename T>
-        void assign(entity id, T data) {
-            ComponentCollection<T>* collection = new ComponentCollection<T>(data);
-            m_ComponentCollections.push_back(collection);
+        void assign(entity id, T component) {
+            const std::type_info& type = typeid(T);
+
+            if (m_componentCollectionIndices.find(type.name()) != m_componentCollectionIndices.end()) {
+                unsigned int componentCollectionIndex = m_componentCollectionIndices[type.name()];
+                // m_componentCollections.at(componentCollectionIndex)->components.at(id) = component;
+            } else {
+                ComponentCollection<T>* collection = new ComponentCollection<T>(component);
+                m_componentCollections.push_back(collection);
+                m_componentCollectionIndices[type.name()] = static_cast<unsigned int>(m_componentCollections.size());
+            }
         }
 
         /**
-         * @brief Get the entities which holds at least each of the given components
+         * @brief Get the entities which holds at least each one of the given components
          */
         template<typename T>
         void view() {
@@ -75,11 +88,18 @@ namespace met {
         // TODO return reference to allow modification
         template<typename T>
         T get(entity id) {
-            return reinterpret_cast<ComponentCollection<T>*>(m_ComponentCollections.at(0))->components.at(id);
+            const std::type_info& type = typeid(T);
+            if (m_componentCollectionIndices.find(type.name()) != m_componentCollectionIndices.end()) {
+                return reinterpret_cast<ComponentCollection<T>*>(m_componentCollections.at(0))->components.at(id);
+            }
+            // TODO throw an exeption ?
+            assert(false && "Test");
         }
 
     private:
         uint32_t m_entityCount;
-        std::vector<IComponentCollection*> m_ComponentCollections;
+        std::vector<IComponentCollection*> m_componentCollections;
+        std::vector<entity> m_deletedEntites;
+        std::unordered_map<std::string, unsigned int> m_componentCollectionIndices;
     };
 }
