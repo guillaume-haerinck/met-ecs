@@ -1,6 +1,8 @@
 #pragma once
 
 #include <vector>
+#include <tuple>
+#include <utility>
 
 #include "../config/config.hpp"
 #include "component-collection.hpp"
@@ -25,9 +27,11 @@ namespace met {
             }
         }
 
+        // TODO implement iterator to allow for (entity id : myView) {} iterations
+
     private:
         /**
-         * @brief Unpack a tuple as the arguments of a function.
+         * @brief Unpack a tuple as the arguments of a variadic lambda function.
          * @note Alteration to std::apply to get entity id and change accessed indices from the arrays stored by the tuple.
          * 
          * @link https://github.com/hokein/Wiki/wiki/How-to-unpack-a-std::tuple-to-a-function-with-multiple-arguments%3F
@@ -39,10 +43,7 @@ namespace met {
         }
 
     private:
-        // Only use std::tuple, with it we can have a perfect AOS (pvs.pvs.pvs) of pointers instead of SOA as stored (ppp.vvv.sss)
-        // const std::tuple<pool_type<Component> *...> pools;
-        // using pool_type = std::conditional_t<std::is_const_v<Comp>, const storage<Entity, std::remove_const_t<Comp>>, storage<Entity, Comp>>;
         std::vector<entity> m_matchingEntities;
-        std::tuple<Comps*...> m_matchingComponentsArrays;
+        std::tuple<Comps*...> m_matchingComponentArrays;
     };
 }
