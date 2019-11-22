@@ -20,13 +20,22 @@ namespace met {
          */
         template<typename Func>
         void each(Func&& consumer) {
-            // TODO check for std::move and std::get from entt view.hpp line 411
-            // TODO check in ECS.h by redxdev the line 1065
-
             for (const entity id: m_matchingEntities) {
-                // TODO pass matching component from tuple at entity index
-                consumer(id, std::get<0>(m_matchingComponentsArrays)[id], std::get<1>(m_matchingComponentsArrays)[id]);
+                apply(id, consumer, m_matchingComponentsArrays, std::index_sequence_for<Comps...> {});
             }
+        }
+
+    private:
+        /**
+         * @brief Unpack a tuple as the arguments of a function.
+         * @note Alteration to std::apply to get entity id and change accessed indices from the arrays stored by the tuple.
+         * 
+         * @link https://github.com/hokein/Wiki/wiki/How-to-unpack-a-std::tuple-to-a-function-with-multiple-arguments%3F
+         * @link https://cpppatterns.com/patterns/apply-tuple-to-function.html
+         */
+        template<typename Func, typename Tuple, std::size_t... I>
+        void apply(entity id, Func&& consumer, const Tuple& compArrays, std::index_sequence<I...>) {
+            consumer(id, std::get<I>(compArrays)[id]...);
         }
 
     private:
