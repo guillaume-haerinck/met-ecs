@@ -25,7 +25,7 @@ namespace met {
 
             for (const entity id: m_matchingEntities) {
                 // TODO pass matching component from tuple at entity index
-                consumer(id);
+                consumer(id, std::get<0>(m_matchingComponentsArrays)[id], std::get<1>(m_matchingComponentsArrays)[id]);
             }
         }
 

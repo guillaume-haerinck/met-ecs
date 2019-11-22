@@ -29,7 +29,7 @@ SCENARIO( "Views are supposed to ...", "[view]" ) {
 
     met::View<Position, Velocity> myView(entities, positions, velocities);
 
-    myView.each([](met::entity id) {
+    myView.each([](met::entity id, auto pos, auto vel) {
         std::cout << "It works for entity " << id << std::endl;
     });
 }
