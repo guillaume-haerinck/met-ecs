@@ -101,13 +101,20 @@ namespace met {
 
         /**
          * @brief Get the entities which holds at least each one of the asked components
-         
-        template<typename T>
-        View view(entity id) {
-            View view;
+         */
+        template<typename... T>
+        View<T...> view(entity id) {
+            // TODO fill with the first component active entities, then reduce with each new component were entities are inactive
+            std::vector<met::entity> matchingEntities = {
+                0, 1, 2
+            };
+           
+            // TODO as met::View<Position, Velocity> myView(entities, positions, velocities);
+            // TODO Init arrays
+            View<T...> view(entities);
+
             return view;
         }
-        */
 
         /**
          * @brief Get the asked component for the given entity

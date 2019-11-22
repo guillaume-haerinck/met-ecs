@@ -15,7 +15,7 @@ namespace met {
     class View {
     public:
         View(const std::vector<entity>& matchingEntities, Comps*... compArrays) 
-        : m_matchingEntities(matchingEntities), m_matchingComponentsArrays(compArrays...) {};
+        : m_matchingEntities(matchingEntities), m_matchingComponentArrays(compArrays...) {};
 
         /**
          * @brief 
@@ -23,7 +23,7 @@ namespace met {
         template<typename Func>
         void each(Func&& consumer) {
             for (const entity id: m_matchingEntities) {
-                apply(id, consumer, m_matchingComponentsArrays, std::index_sequence_for<Comps...> {});
+                apply(id, consumer, m_matchingComponentArrays, std::index_sequence_for<Comps...> {});
             }
         }
 
