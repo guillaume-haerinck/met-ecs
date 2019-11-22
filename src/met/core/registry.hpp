@@ -101,12 +101,13 @@ namespace met {
 
         /**
          * @brief Get the entities which holds at least each one of the asked components
-         */
+         
         template<typename T>
         View view(entity id) {
             View view;
             return view;
         }
+        */
 
         /**
          * @brief Get the asked component for the given entity

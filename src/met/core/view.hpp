@@ -9,27 +9,29 @@ namespace met {
     /**
      * @brief Collection of components of multiple types associated to multiple entities
      */
+    template<typename... Comps>
     class View {
     public:
-        View(std::vector<IComponentCollection*> components, std::vector<entity> entities)
-        : m_matchingComponents(components), m_matchingEntities(entities) {};
-
-        ~View() {};
+        View(const Comps&... comps) : m_matchingComponentsCollection(comps...) {};
 
         /**
          * @brief 
          */
         template<typename Func>
-        void each(Func&& lambda) {
+        void each(Func&& consumer) {
             // TODO check for std::move and std::get from entt view.hpp line 411
             // TODO check in ECS.h by redxdev the line 1065
 
-            for (const entity id : m_matchingEntities) {
+            consumer();
+
+            /*
+            for (const auto components : m_matchingComponentsCollection) {
                 // TODO pass each matching components at the current entity index as function parameters
                 // How to handle variable number of function parameters ? Variadic function
                 // Does not work need to know the concrete data
                 lambda();
             }
+            */
         }
 
     private:
@@ -37,7 +39,6 @@ namespace met {
         // const std::tuple<pool_type<Component> *...> pools;
         // using pool_type = std::conditional_t<std::is_const_v<Comp>, const storage<Entity, std::remove_const_t<Comp>>, storage<Entity, Comp>>;
 
-        std::vector<IComponentCollection*> m_matchingComponents;
-        std::vector<entity> m_matchingEntities;
+        std::tuple<Comps...> m_matchingComponentsCollection;
     };
 }

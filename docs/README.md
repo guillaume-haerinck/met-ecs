@@ -1,7 +1,10 @@
 
 ## Questions en suspens
 
-- Utilité d'utiliser des allocateur personnalisés
-- L'optimisation en mémoire du get avec un reinterpret cast (recup un tableau d'entité plutot ?)
-- Gestion des erreurs, utiliser assertions VS exeptions (pas de codes d'erreurs)
-- Rapport en anglais 
+- Utilité d'utiliser des allocateur personnalisés -> Pour mieux gerrer l'allocation
+- Gestion des erreurs, utiliser assertion
+- std tuple quand on get les components
+
+voir std::any plutot que le cast ? (jamais utiliser reinterpret cast)
+
+voir renommer function lambda en consummer (voir aussi predicate) ?

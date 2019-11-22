@@ -3,25 +3,22 @@
 
 #include <iostream>
 
+struct Position {
+    float x;
+    float y;
+};
+
 struct Velocity {
     float t;
 };
 
 SCENARIO( "Views are supposed to ...", "[view]" ) {
-    auto velocities = new met::ComponentCollection<Velocity>();
-    Velocity vel = { 5 };
-    velocities->components.at(0) = vel;
+    Position pos = {3, 2};
+    Velocity vel = {5};
 
-    std::vector<met::IComponentCollection*> components = {
-        velocities
-    };
-    std::vector<met::entity> entities = {
-        0, 1, 2
-    };
+    met::View<Position, Velocity> myView(pos, vel);
 
-    met::View myView(components, entities);
-
-    myView.each([]() { 
-        std::cout << "It works !" << std::endl;
+    myView.each([](){
+        std::cout << "It works" << std::endl;
     });
 }
