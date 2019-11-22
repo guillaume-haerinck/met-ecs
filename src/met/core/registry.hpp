@@ -109,9 +109,17 @@ namespace met {
                 0, 1, 2
             };
            
-            // TODO as met::View<Position, Velocity> myView(entities, positions, velocities);
-            // TODO Init arrays
-            View<T...> view(entities);
+            // TODO as met::View<Position, Velocity> myView(entities, positions, velocities); with T...
+            View<T...> view(matchingEntities);
+
+            /*
+            Pour chaque, et construire le view avec les bons tableaux
+
+            const std::type_info& type = typeid(T);
+            if (m_componentCollectionIndices.find(type.name()) != m_componentCollectionIndices.end()) {
+                unsigned int index = m_componentCollectionIndices[type.name()];
+            }
+            */
 
             return view;
         }

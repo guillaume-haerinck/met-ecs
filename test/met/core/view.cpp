@@ -32,8 +32,19 @@ SCENARIO( "Views are supposed to ...", "[view]" ) {
     positions[0] = { 0, 0 };
 
     myView.each([](met::entity id, Position& pos, Velocity& vel) {
-        std::cout << "It works for entity " << id << std::endl;
-        std::cout << "pos " << pos.x << " " << pos.y << std::endl;
-        std::cout << "vel " << vel.t << std::endl;
+        // std::cout << "It works for entity " << id << std::endl;
+        // std::cout << "pos " << pos.x << " " << pos.y << std::endl;
+        // std::cout << "vel " << vel.t << std::endl;
     });
+}
+
+SCENARIO( "Views2 are supposed to ...", "[view]" ) {
+    met::Registry registry;
+    auto entity = registry.create();
+    Position pos = { 5, 2 };
+    Velocity vel = { 3 };
+    registry.assign<Position>(entity, pos);
+    registry.assign<Velocity>(entity, vel);
+
+    auto view = registry.view<Position, Velocity>(entity);
 }

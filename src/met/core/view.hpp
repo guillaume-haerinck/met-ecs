@@ -15,7 +15,10 @@ namespace met {
     class View {
     public:
         View(const std::vector<entity>& matchingEntities, Comps*... compArrays) 
-        : m_matchingEntities(matchingEntities), m_matchingComponentArrays(compArrays...) {};
+        : m_matchingEntities(matchingEntities), m_matchingComponentArrays(compArrays...) {}
+
+        // Temp
+        View(const std::vector<entity>& matchingEntities) : m_matchingEntities(matchingEntities) {}
 
         /**
          * @brief 
