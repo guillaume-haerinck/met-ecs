@@ -13,12 +13,23 @@ struct Velocity {
 };
 
 SCENARIO( "Views are supposed to ...", "[view]" ) {
-    Position pos = {3, 2};
-    Velocity vel = {5};
+    Position positions[] = {
+        {3, 2},
+        {8, 5},
+        {9, 15}
+    };
+    Velocity velocities[] = {
+        {5},
+        {6},
+        {8}
+    };
+    std::vector<met::entity> entities = {
+        0, 1, 2
+    };
 
-    met::View<Position, Velocity> myView(pos, vel);
+    met::View<Position, Velocity> myView(entities, positions, velocities);
 
-    myView.each([](){
-        std::cout << "It works" << std::endl;
+    myView.each([](met::entity id) {
+        std::cout << "It works for entity " << id << std::endl;
     });
 }

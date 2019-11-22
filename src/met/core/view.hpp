@@ -12,7 +12,8 @@ namespace met {
     template<typename... Comps>
     class View {
     public:
-        View(const Comps&... comps) : m_matchingComponentsCollection(comps...) {};
+        View(const std::vector<entity>& matchingEntities, Comps*... compArrays) 
+        : m_matchingEntities(matchingEntities), m_matchingComponentsArrays(compArrays...) {};
 
         /**
          * @brief 
@@ -22,23 +23,17 @@ namespace met {
             // TODO check for std::move and std::get from entt view.hpp line 411
             // TODO check in ECS.h by redxdev the line 1065
 
-            consumer();
-
-            /*
-            for (const auto components : m_matchingComponentsCollection) {
-                // TODO pass each matching components at the current entity index as function parameters
-                // How to handle variable number of function parameters ? Variadic function
-                // Does not work need to know the concrete data
-                lambda();
+            for (const entity id: m_matchingEntities) {
+                // TODO pass matching component from tuple at entity index
+                consumer(id);
             }
-            */
         }
 
     private:
         // Only use std::tuple, with it we can have a perfect AOS (pvs.pvs.pvs) of pointers instead of SOA as stored (ppp.vvv.sss)
         // const std::tuple<pool_type<Component> *...> pools;
         // using pool_type = std::conditional_t<std::is_const_v<Comp>, const storage<Entity, std::remove_const_t<Comp>>, storage<Entity, Comp>>;
-
-        std::tuple<Comps...> m_matchingComponentsCollection;
+        std::vector<entity> m_matchingEntities;
+        std::tuple<Comps*...> m_matchingComponentsArrays;
     };
 }
