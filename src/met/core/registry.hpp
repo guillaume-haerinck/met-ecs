@@ -124,8 +124,8 @@ namespace met {
 			const ComponentCollection<Comp>* collection = getCollection<Comp>();
 			m_tempMatchCount = 0;
 
-			for (size_t i = 0; i < collection->components.size(); ++i) {
-				if (collection->componentIndices.at(i) != 0) {
+			for (size_t i = 0; i <= collection->size(); ++i) {
+				if (collection->has(i)) {
 					m_tempMatchingEntities.at(m_tempMatchCount) = i;
 					m_tempMatchCount++;
 				}
@@ -142,7 +142,7 @@ namespace met {
 			for (size_t i = 0; i < m_tempMatchCount; ++i) {
 				const entity id = m_tempMatchingEntities.at(i);
 
-				if (collection->componentIndices.at(id) == 0) {
+				if (!collection->has(id)) {
 					m_tempMatchingEntities.at(i) = m_tempMatchingEntities.at(i + 1);
 					m_tempMatchCount--;
 					i--;
