@@ -108,9 +108,7 @@ namespace met {
                 1, 2
             };
 
-			// TODO do this for the Comps
-            View<Comps...> view(matchingEntities, getRawArray<Position>(), getRawArray<Velocity>());
-
+            View<Comps...> view(matchingEntities, getRawArray<Comps>()...);
             return view;
         }
 
