@@ -19,7 +19,7 @@ namespace met {
         }
 
         ~Registry() {
-            for (const auto& componentCollection : m_componentCollections) {
+            for (auto* componentCollection : m_componentCollections) {
                 delete componentCollection;
             }
         }
@@ -180,7 +180,7 @@ namespace met {
 
     private:
         entity m_entityCount;
-        std::vector<entity> m_unusedIndices;
+        std::vector<entity> m_unusedEntityIndices;
         std::vector<IComponentCollection*> m_componentCollections;
         std::unordered_map<std::string, unsigned int> m_componentCollectionIndices;
 
