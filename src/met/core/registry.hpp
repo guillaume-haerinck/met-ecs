@@ -99,18 +99,8 @@ namespace met {
 
         }
 
-		/**
-		 * @brief Single component view. Get the entities which holds at the asked component.
-		 */
-		template<typename Comp>
-		View<Comp> view() {
-			fillMatchingEntities<Comp>();
-			View<Comp> view(m_tempMatchCount, m_tempMatchingEntities.data(), getRawArray<Comp>());
-			return view;
-		}
-
         /**
-         * @brief Multi-component view. Get the entities which holds at least each one of the asked components
+         * @brief Get the entities which holds at least each one of the asked components
          */
         template<typename Comp, typename... Comps>
         View<Comp, Comps...> view() {
@@ -195,6 +185,8 @@ namespace met {
         std::vector<entity> m_unusedIndices;
         std::vector<IComponentCollection*> m_componentCollections;
         std::unordered_map<std::string, unsigned int> m_componentCollectionIndices;
+
+		// TODO Find a way to be multi-thread friendly while matching components and entities
 		std::array<entity, MAX_ENTITIES> m_tempMatchingEntities;
 		unsigned int m_tempMatchCount;
     };

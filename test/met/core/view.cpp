@@ -31,4 +31,9 @@ SCENARIO( "Views2 are supposed to ...", "[view]" ) {
 		std::cout << "pos " << pos.x << " " << pos.y << std::endl;
 		std::cout << "vel " << vel.t << std::endl;
 	});
+
+	registry.view<Position>().each([](met::entity id, Position& pos) {
+		std::cout << "It works for entity " << id << std::endl;
+		std::cout << "pos " << pos.x << " " << pos.y << std::endl;
+	});
 }
