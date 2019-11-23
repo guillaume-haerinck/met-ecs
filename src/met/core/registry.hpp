@@ -184,8 +184,8 @@ namespace met {
         std::vector<IComponentCollection*> m_componentCollections;
         std::unordered_map<std::string, unsigned int> m_componentCollectionIndices;
 
-		// TODO Find a way to be multi-thread friendly while matching components and entities
-		// Is there a better solution than creating an array each time and copying it to the view ?
+		// TODO Allow for multi-threading with std::async when matching entities with components to create views
+		// Have multiple independant compile-time arrays. 6 might be enough because 6 processor cores to work with is already a lot
 		std::array<entity, MAX_ENTITIES> m_tempMatchingEntities;
 		unsigned int m_tempMatchCount;
     };

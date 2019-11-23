@@ -73,6 +73,10 @@ namespace met {
 			return m_components.size() - 1;
 		}
 
+		// TODO handle deletion (place last comp at the position of the deleted one VS store gap and use it during next insertion)
+
+		// TODO handle sorting
+
     private:
         std::vector<T> m_components;
     };
