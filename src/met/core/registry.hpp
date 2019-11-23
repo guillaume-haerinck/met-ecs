@@ -29,6 +29,7 @@ namespace met {
          */
         entity create() {
             return ++m_entityCount;
+			// TODO assert that it does not goes outside MAX_ENTITIES
         }
 
         /**
@@ -103,7 +104,7 @@ namespace met {
          */
         template<typename... Comps>
         View<Comps...> view() {
-            // TODO fill with the first component active entities, then reduce with each new component were entities are inactive
+            // TODO fill with first component. Then check with others. If false, swap next with current, and continue.
 			unsigned int matchCount = 2;
 			m_tempMatchingEntities.at(0) = 1;
 			m_tempMatchingEntities.at(1) = 2;
@@ -117,16 +118,29 @@ namespace met {
          */
         template<typename Comp>
 		Comp& get(const entity id) {
-            return static_cast<ComponentCollection<Comp>*>(m_componentCollections.at(getCollectionIndex<Comp>()))->components.at(id);
+            return getCollection<Comp>()->components.at(id);
         }
 
 	private:
+		template<typename Comp>
+		void fillMatchingEntities(ComponentCollection<Comp>* collection) {
+			// std::count << collection->hasComponent.at(0) << std::endl;
+		}
+
 		/**
 		 * @brief Get the raw array for the asked component
 		 */
 		template<typename Comp>
 		Comp* getRawArray() {
-			return static_cast<ComponentCollection<Comp>*>(m_componentCollections.at(getCollectionIndex<Comp>()))->components.data();
+			return getCollection<Comp>()->components.data();
+		}
+
+		/**
+		 * @brief Get the collection pointer of the asked component
+		 */
+		template<typename Comp>
+		ComponentCollection<Comp>* getCollection() {
+			return static_cast<ComponentCollection<Comp>*>(m_componentCollections.at(getCollectionIndex<Comp>()));
 		}
 
 		/**
