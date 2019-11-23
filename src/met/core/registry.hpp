@@ -50,14 +50,9 @@ namespace met {
             if (collectionExist) {
                 unsigned int index = m_componentCollectionIndices[type.name()];
                 ComponentCollection<T>* collection = static_cast<ComponentCollection<T>*>(m_componentCollections.at(index));
-                collection->components.push_back(component);
-                collection->componentIndices.at(id) = collection->components.size() - 1;
+                collection->insert(id, component);
             } else {
-                ComponentCollection<T>* collection = new ComponentCollection<T>();
-				collection->components.push_back(component); // Unused, index 0 is for false
-				collection->components.push_back(component);
-				collection->componentIndices.at(id) = collection->components.size() - 1;
-
+                ComponentCollection<T>* collection = new ComponentCollection<T>(id, component);
                 m_componentCollections.push_back(collection);
                 m_componentCollectionIndices[type.name()] = static_cast<unsigned int>(m_componentCollections.size() - 1);
             }
@@ -190,6 +185,7 @@ namespace met {
         std::unordered_map<std::string, unsigned int> m_componentCollectionIndices;
 
 		// TODO Find a way to be multi-thread friendly while matching components and entities
+		// Is there a better solution than creating an array each time and copying it to the view ?
 		std::array<entity, MAX_ENTITIES> m_tempMatchingEntities;
 		unsigned int m_tempMatchCount;
     };
