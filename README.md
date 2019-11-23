@@ -29,12 +29,26 @@ struct Position {
     float y;
 };
 
+struct velocity {
+    float dx;
+    float dy;
+};
+
 int main() {
     met::registry registry;
-
     auto entity = registry.create();
+    
     Position pos = { 2, 3 };
     registry.assign<position>(entity, pos);
+    
+    Velocity vel = { 5, 8 };
+    registry.assign<position>(entity, vel);
+    
+    registry.view<Position, Velocity>().each([](met::entity id, Position& pos, Velocity& vel) {
+        pos.x += 2;
+        std::cout << "pos " << pos.x << " " << pos.y << std::endl;
+        std::cout << "vel " << vel.dx << " " << vel.dy << std::endl;
+    });
 
     // ...
 }
