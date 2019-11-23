@@ -104,12 +104,9 @@ namespace met {
          */
         template<typename... Comps>
         View<Comps...> view() {
-            // TODO fill with first component.
-			m_tempMatchCount = 2;
-			m_tempMatchingEntities.at(0) = 1;
-			m_tempMatchingEntities.at(1) = 2;
-
-			(..., removeUnmatchingEntities<Comps>());
+			// Fold expression, apply one fillMatchingEntities() then removeUnmatchingEntities() to each remaining Component type
+			// TODO
+			(fillMatchingEntities<Comps>(), ...);
 
             View<Comps...> view(m_tempMatchCount, m_tempMatchingEntities.data(), getRawArray<Comps>()...);
             return view;
@@ -124,6 +121,22 @@ namespace met {
         }
 
 	private:
+		/**
+		 * @brief fill the m_tempMatchingEntities array with the entities which have the given component
+		 */
+		template<typename Comp>
+		void fillMatchingEntities() {
+			const ComponentCollection<Comp>* collection = getCollection<Comp>();
+			m_tempMatchCount = 0;
+
+			for (size_t i = 0; i < collection->components.size(); ++i) {
+				if (collection->hasComponent.at(i)) {
+					m_tempMatchingEntities.at(m_tempMatchCount) = i;
+					m_tempMatchCount++;
+				}
+			}
+		}
+
 		/**
 		 * @brief Remove the entities which does not have the given component from m_tempMatchingEntities array
 		 */
