@@ -31,6 +31,10 @@ namespace met {
         virtual ~ComponentCollection() {};
 
     public:
+		// TODO consider using sparse-set to prevent storing components not used by entities
+		// It works with two array, one Dense with components, and the other, sparse, linking entity id to their component indices
+		// The Dense can match the size of the actually used components, while the other can match the max number of entities. 
+		// Value 0 in sparse being not using the component
         std::array<T, MAX_ENTITIES> components;
     };
 }

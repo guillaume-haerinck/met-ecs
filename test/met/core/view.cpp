@@ -14,7 +14,7 @@ struct Velocity {
 };
 
 SCENARIO( "Views are supposed to allow us to iterate through entities with a given set of components", "[view]" ) {
-	GIVEN( "A registry with multiple entities and components" ) {
+	GIVEN( "A registry with 2 entities and 2 components" ) {
 		met::Registry registry;
 		Position pos = { 5, 2 };
 		Velocity vel = { 3 };
@@ -40,6 +40,19 @@ SCENARIO( "Views are supposed to allow us to iterate through entities with a giv
 				view1.each([vel](met::entity id, Position& storedPos, Velocity& storedVel) {
 					REQUIRE( vel.dx == storedVel.dx );
 					REQUIRE( vel.dy == storedVel.dy );
+				});
+			}
+
+			THEN("we should be able to modify components in a lambda function") {
+				vel = { 25, 56 };
+
+				view1.each([vel](met::entity id, Position& storedPos, Velocity& storedVel) {
+					storedVel = vel;
+				});
+
+				view1.each([vel](met::entity id, Position& storedPos, Velocity& storedVel) {
+					REQUIRE(vel.dx == storedVel.dx);
+					REQUIRE(vel.dy == storedVel.dy);
 				});
 			}
 		}
