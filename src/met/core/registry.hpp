@@ -104,11 +104,11 @@ namespace met {
         template<typename... Comps>
         View<Comps...> view() {
             // TODO fill with the first component active entities, then reduce with each new component were entities are inactive
-            std::vector<entity> matchingEntities = {
-                1, 2
-            };
+			unsigned int matchCount = 2;
+			m_tempMatchingEntities.at(0) = 1;
+			m_tempMatchingEntities.at(1) = 2;
 
-            View<Comps...> view(matchingEntities, getRawArray<Comps>()...);
+            View<Comps...> view(matchCount, m_tempMatchingEntities.data(), getRawArray<Comps>()...);
             return view;
         }
 
@@ -116,7 +116,7 @@ namespace met {
          * @brief Get the asked component for the given entity
          */
         template<typename Comp>
-		Comp& get(entity id) {
+		Comp& get(const entity id) {
             return static_cast<ComponentCollection<Comp>*>(m_componentCollections.at(getCollectionIndex<Comp>()))->components.at(id);
         }
 
@@ -138,7 +138,7 @@ namespace met {
 			if (m_componentCollectionIndices.find(type.name()) != m_componentCollectionIndices.end()) {
 				return m_componentCollectionIndices[type.name()];
 			}
-			assert(false && "The component(s) type(s) does not exist(s) in the registry");
+			assert(false && "The component type does not exist in the registry");
 		}
 
     private:
@@ -146,5 +146,6 @@ namespace met {
         std::vector<entity> m_unusedIndices;
         std::vector<IComponentCollection*> m_componentCollections;
         std::unordered_map<std::string, unsigned int> m_componentCollectionIndices; 
+		std::array<entity, MAX_ENTITIES> m_tempMatchingEntities;
     };
 }
