@@ -46,5 +46,5 @@ SCENARIO( "Views2 are supposed to ...", "[view]" ) {
     registry.assign<Position>(entity, pos);
     registry.assign<Velocity>(entity, vel);
 
-    auto view = registry.view<Position, Velocity>(entity);
+    auto view = registry.view<Position, Velocity>();
 }

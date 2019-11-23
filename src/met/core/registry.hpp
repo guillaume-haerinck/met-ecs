@@ -102,24 +102,17 @@ namespace met {
         /**
          * @brief Get the entities which holds at least each one of the asked components
          */
-        template<typename... T>
-        View<T...> view(entity id) {
+        template<typename... Comps>
+        View<Comps...> view() {
             // TODO fill with the first component active entities, then reduce with each new component were entities are inactive
             std::vector<met::entity> matchingEntities = {
                 0, 1, 2
             };
-           
-            // TODO as met::View<Position, Velocity> myView(entities, positions, velocities); with T...
-            View<T...> view(matchingEntities);
 
-            /*
-            Pour chaque, et construire le view avec les bons tableaux
+            View<Comps...> view(matchingEntities);
 
-            const std::type_info& type = typeid(T);
-            if (m_componentCollectionIndices.find(type.name()) != m_componentCollectionIndices.end()) {
-                unsigned int index = m_componentCollectionIndices[type.name()];
-            }
-            */
+			// TODO fill view constructor with each output of this fold expression
+			(std::cout << ... << reinterpret_cast<ComponentCollection<Comps>*>(m_componentCollectionIndices[typeid(Comps).name()])->components.data() );
 
             return view;
         }
