@@ -1,8 +1,10 @@
 #pragma once
 
 #include <vector>
+#include <deque>
 #include <unordered_map>
 #include <typeinfo>
+#include <cassert>
 
 #include "../config/config.hpp"
 #include "component-collection.hpp"
@@ -14,7 +16,7 @@ namespace met {
      */
     class Registry {
     public:
-        Registry() : m_entityCount(0), m_tempMatchCount(0) {
+        Registry() : m_lastEntityId(0), m_tempMatchCount(0) {
             m_componentCollections.reserve(MIN_COMPONENT_TYPES);
         }
 
@@ -28,8 +30,8 @@ namespace met {
          * @brief Create a new entity
          */
         entity create() {
-			assert(m_entityCount < MAX_ENTITIES && "You reached MAX_ENTITIES");
-            return ++m_entityCount;
+			assert(m_lastEntityId < MAX_ENTITIES && "You reached MAX_ENTITIES");
+            return ++m_lastEntityId;
         }
 
         /**
@@ -62,7 +64,7 @@ namespace met {
          * @brief Says wether the entity has the given component or not
          */
         template<typename Comp>
-        bool has(entity id) {
+        bool has(entity id) const {
 			const ComponentCollection<Comp>* collection = getCollection<Comp>();
             return collection->has(id);
         }
@@ -70,8 +72,18 @@ namespace met {
         /**
          * @brief Says if the entity exist
          */
-        bool valid(entity id) {
+        bool valid(entity id) const {
+			if (id > m_lastEntityId) {
+				return false;
+			}
 
+			for (entity unusedId : m_unusedEntityIndices) {
+				if (id == unusedId) {
+					return false;
+				}
+			}
+
+			return true;
         }
 
         /**
@@ -173,8 +185,8 @@ namespace met {
 		}
 
     private:
-        entity m_entityCount;
-        std::vector<entity> m_unusedEntityIndices;
+        entity m_lastEntityId;
+        std::deque<entity> m_unusedEntityIndices;
         std::vector<IComponentCollection*> m_componentCollections;
         std::unordered_map<std::string, unsigned int> m_componentCollectionIndices;
 

@@ -2,6 +2,7 @@
 
 #include <array>
 #include <vector>
+#include <cassert>
 
 #include "../config/config.hpp"
 
@@ -29,11 +30,15 @@ namespace met {
     class ComponentCollection : public IComponentCollection {
     public:
         ComponentCollection(entity id, T& component) {
-			assert(id != null_entity && "Null entity cannot have components");
 			m_components.reserve(10);
-			m_components.push_back(component); // Unused, index 0 is for false
+			m_componentToIndices.reserve(10);
+
+			// Unused, index 0 is for false
 			m_components.push_back(component);
-			m_componentIndices.at(id) = static_cast<unsigned int>(m_components.size()) - 1;
+			m_componentToIndices.push_back(0);
+
+			// Add first entity
+			insert(id, component);
 		};
 
         virtual ~ComponentCollection() {};
@@ -44,7 +49,25 @@ namespace met {
 		void insert(entity id, T& component) {
 			assert(id != null_entity && "Null entity cannot have components");
 			m_components.push_back(component);
+			m_componentToIndices.push_back(id);
 			m_componentIndices.at(id) = static_cast<unsigned int>(m_components.size()) - 1;
+		}
+
+		/**
+		 * @brief Removes the component from the given entity
+		 */
+		void remove(entity id) {
+			// Fill deleted entity data position with last data
+			const auto lastIndex = m_components.size() - 1;
+			at(id) = at(lastIndex);
+
+			// Gives the new index to the entity which had the last data
+			m_componentIndices.at(m_componentToIndices.at(lastIndex)) = m_componentIndices.at(id);
+
+			// Removes unsused data
+			m_componentIndices.at(id) = 0;
+			m_components.pop_back();
+			m_reverseIndices.pop_back();
 		}
 
 		/**
@@ -74,11 +97,10 @@ namespace met {
 			return m_components.size() - 1;
 		}
 
-		// TODO handle deletion (place last comp at the position of the deleted one VS store gap and use it during next insertion)
-
 		// TODO handle sorting
 
     private:
+		std::vector<unsigned int> m_componentToIndices; // Gives the entity which has the component at the given index of m_components
         std::vector<T> m_components;
     };
 }
