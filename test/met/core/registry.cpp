@@ -1,12 +1,7 @@
 #include <catch2/catch.hpp>
 #include <met/met.hpp>
 
-#include <iostream>
-
-struct Position {
-    float x;
-    float y;
-};
+#include "common.hpp"
 
 SCENARIO( "registry is supposed to handle entities and components", "[registry]" ) {
     GIVEN( "An empty registry" ) {

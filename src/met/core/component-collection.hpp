@@ -67,7 +67,7 @@ namespace met {
 			// Removes unsused data
 			m_componentIndices.at(id) = 0;
 			m_components.pop_back();
-			m_reverseIndices.pop_back();
+			m_componentToIndices.pop_back();
 		}
 
 		/**

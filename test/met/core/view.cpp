@@ -1,17 +1,7 @@
 #include <catch2/catch.hpp>
 #include <met/met.hpp>
 
-#include <iostream>
-
-struct Position {
-    float x;
-    float y;
-};
-
-struct Velocity {
-    float dx;
-	float dy;
-};
+#include "common.hpp"
 
 SCENARIO( "Views are supposed to allow us to iterate through entities with a given set of components", "[view]" ) {
 	GIVEN( "A registry with 2 entities and 2 components" ) {
@@ -51,8 +41,8 @@ SCENARIO( "Views are supposed to allow us to iterate through entities with a giv
 				});
 
 				view1.each([vel](met::entity id, Position& storedPos, Velocity& storedVel) {
-					REQUIRE(vel.dx == storedVel.dx);
-					REQUIRE(vel.dy == storedVel.dy);
+					REQUIRE( vel.dx == storedVel.dx );
+					REQUIRE( vel.dy == storedVel.dy );
 				});
 			}
 		}
