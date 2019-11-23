@@ -104,12 +104,14 @@ namespace met {
          */
         template<typename... Comps>
         View<Comps...> view() {
-            // TODO fill with first component. Then check with others. If false, swap next with current, and continue.
-			unsigned int matchCount = 2;
+            // TODO fill with first component.
+			m_tempMatchCount = 2;
 			m_tempMatchingEntities.at(0) = 1;
 			m_tempMatchingEntities.at(1) = 2;
 
-            View<Comps...> view(matchCount, m_tempMatchingEntities.data(), getRawArray<Comps>()...);
+			(..., removeUnmatchingEntities<Comps>());
+
+            View<Comps...> view(m_tempMatchCount, m_tempMatchingEntities.data(), getRawArray<Comps>()...);
             return view;
         }
 
@@ -122,9 +124,21 @@ namespace met {
         }
 
 	private:
+		/**
+		 * @brief Remove the entities which does not have the given component from m_tempMatchingEntities array
+		 */
 		template<typename Comp>
-		void fillMatchingEntities(ComponentCollection<Comp>* collection) {
-			// std::count << collection->hasComponent.at(0) << std::endl;
+		void removeUnmatchingEntities() {
+			const ComponentCollection<Comp>* collection = getCollection<Comp>();
+			for (size_t i = 0; i < m_tempMatchCount; ++i) {
+				const entity id = m_tempMatchingEntities.at(i);
+
+				if (!collection->hasComponent.at(id)) {
+					m_tempMatchingEntities.at(i) = m_tempMatchingEntities.at(i + 1);
+					m_tempMatchCount--;
+					i--;
+				}
+			}
 		}
 
 		/**
@@ -159,7 +173,8 @@ namespace met {
         entity m_entityCount;
         std::vector<entity> m_unusedIndices;
         std::vector<IComponentCollection*> m_componentCollections;
-        std::unordered_map<std::string, unsigned int> m_componentCollectionIndices; 
+        std::unordered_map<std::string, unsigned int> m_componentCollectionIndices;
 		std::array<entity, MAX_ENTITIES> m_tempMatchingEntities;
+		unsigned int m_tempMatchCount;
     };
 }
