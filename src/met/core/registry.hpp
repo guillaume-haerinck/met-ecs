@@ -99,16 +99,24 @@ namespace met {
 
         }
 
-        /**
-         * @brief Get the entities which holds at least each one of the asked components
-         */
-        template<typename... Comps>
-        View<Comps...> view() {
-			// Fold expression, apply one fillMatchingEntities() then removeUnmatchingEntities() to each remaining Component type
-			// TODO
-			(fillMatchingEntities<Comps>(), ...);
+		/**
+		 * @brief Single component view. Get the entities which holds at the asked component.
+		 */
+		template<typename Comp>
+		View<Comp> view() {
+			fillMatchingEntities<Comp>();
+			View<Comp> view(m_tempMatchCount, m_tempMatchingEntities.data(), getRawArray<Comp>());
+			return view;
+		}
 
-            View<Comps...> view(m_tempMatchCount, m_tempMatchingEntities.data(), getRawArray<Comps>()...);
+        /**
+         * @brief Multi-component view. Get the entities which holds at least each one of the asked components
+         */
+        template<typename Comp, typename... Comps>
+        View<Comp, Comps...> view() {
+			fillMatchingEntities<Comp>();
+			(removeUnmatchingEntities<Comps>(), ...);
+            View<Comp, Comps...> view(m_tempMatchCount, m_tempMatchingEntities.data(), getRawArray<Comp>(), getRawArray<Comps>()...);
             return view;
         }
 
