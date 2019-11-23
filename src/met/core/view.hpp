@@ -14,8 +14,8 @@ namespace met {
     template<typename... Comps>
     class View {
     public:
-        View(entity matchingEntitiesCount, entity* matchingEntities, Comps*... compArrays) 
-        : m_matchingEntitiesCount(matchingEntitiesCount), m_matchingEntities(matchingEntities), m_matchingComponentArrays(compArrays...) {}
+        View(entity matchingEntitiesCount, entity* matchingEntities, ComponentCollection<Comps>*... compCollections) 
+        : m_matchingEntitiesCount(matchingEntitiesCount), m_matchingEntities(matchingEntities), m_matchingComponentCollections(compCollections...) {}
 
         /**
          * @brief 
@@ -23,7 +23,7 @@ namespace met {
         template<typename Func>
         void each(Func&& consumer) {
 			for (size_t i = 0; i < m_matchingEntitiesCount; i++) {
-				apply(m_matchingEntities[i], consumer, m_matchingComponentArrays, std::index_sequence_for<Comps...> {});
+				apply(m_matchingEntities[i], consumer, m_matchingComponentCollections, std::index_sequence_for<Comps...> {});
 			}
         }
 
@@ -45,13 +45,13 @@ namespace met {
          * @link https://cpppatterns.com/patterns/apply-tuple-to-function.html
          */
         template<typename Func, typename Tuple, std::size_t... I>
-        void apply(entity id, Func&& consumer, const Tuple& compArrays, std::index_sequence<I...>) {
-            consumer(id, std::get<I>(compArrays)[id]...);
+        void apply(entity id, Func&& consumer, const Tuple& compCollection, std::index_sequence<I...>) {
+            consumer(id, std::get<I>(compCollection)->components.at(std::get<I>(compCollection)->componentIndices.at(id))...);
         }
 
     private:
         entity* m_matchingEntities;
 		entity m_matchingEntitiesCount;
-        std::tuple<Comps*...> m_matchingComponentArrays;
+        std::tuple<ComponentCollection<Comps>*...> m_matchingComponentCollections;
     };
 }

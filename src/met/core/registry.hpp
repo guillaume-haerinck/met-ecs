@@ -14,7 +14,7 @@ namespace met {
      */
     class Registry {
     public:
-        Registry() : m_entityCount(0) {
+        Registry() : m_entityCount(0), m_tempMatchCount(0) {
             m_componentCollections.reserve(MIN_COMPONENT_TYPES);
         }
 
@@ -28,8 +28,8 @@ namespace met {
          * @brief Create a new entity
          */
         entity create() {
+			assert(m_entityCount < MAX_ENTITIES && "You reached MAX_ENTITIES");
             return ++m_entityCount;
-			// TODO assert that it does not goes outside MAX_ENTITIES
         }
 
         /**
@@ -50,12 +50,13 @@ namespace met {
             if (collectionExist) {
                 unsigned int index = m_componentCollectionIndices[type.name()];
                 ComponentCollection<T>* collection = static_cast<ComponentCollection<T>*>(m_componentCollections.at(index));
-                collection->components.at(id) = component;
-                collection->hasComponent.at(id) = true;
+                collection->components.push_back(component);
+                collection->componentIndices.at(id) = collection->components.size() - 1;
             } else {
                 ComponentCollection<T>* collection = new ComponentCollection<T>();
-                collection->components.at(id) = component;
-                collection->hasComponent.at(id) = true;
+				collection->components.push_back(component); // Unused, index 0 is for false
+				collection->components.push_back(component);
+				collection->componentIndices.at(id) = collection->components.size() - 1;
 
                 m_componentCollections.push_back(collection);
                 m_componentCollectionIndices[type.name()] = static_cast<unsigned int>(m_componentCollections.size() - 1);
@@ -106,7 +107,7 @@ namespace met {
         View<Comp, Comps...> view() {
 			fillMatchingEntities<Comp>();
 			(removeUnmatchingEntities<Comps>(), ...);
-            View<Comp, Comps...> view(m_tempMatchCount, m_tempMatchingEntities.data(), getRawArray<Comp>(), getRawArray<Comps>()...);
+            View<Comp, Comps...> view(m_tempMatchCount, m_tempMatchingEntities.data(), getCollection<Comp>(), getCollection<Comps>()...);
             return view;
         }
 
@@ -115,7 +116,8 @@ namespace met {
          */
         template<typename Comp>
 		Comp& get(const entity id) {
-            return getCollection<Comp>()->components.at(id);
+			ComponentCollection<Comp>* collection = getCollection<Comp>();
+            return collection->components.at(collection->componentIndices.at(id));
         }
 
 	private:
@@ -128,7 +130,7 @@ namespace met {
 			m_tempMatchCount = 0;
 
 			for (size_t i = 0; i < collection->components.size(); ++i) {
-				if (collection->hasComponent.at(i)) {
+				if (collection->componentIndices.at(i) != 0) {
 					m_tempMatchingEntities.at(m_tempMatchCount) = i;
 					m_tempMatchCount++;
 				}
@@ -141,10 +143,11 @@ namespace met {
 		template<typename Comp>
 		void removeUnmatchingEntities() {
 			const ComponentCollection<Comp>* collection = getCollection<Comp>();
+
 			for (size_t i = 0; i < m_tempMatchCount; ++i) {
 				const entity id = m_tempMatchingEntities.at(i);
 
-				if (!collection->hasComponent.at(id)) {
+				if (collection->componentIndices.at(id) == 0) {
 					m_tempMatchingEntities.at(i) = m_tempMatchingEntities.at(i + 1);
 					m_tempMatchCount--;
 					i--;
