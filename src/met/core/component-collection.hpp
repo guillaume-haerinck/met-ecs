@@ -28,6 +28,7 @@ namespace met {
     class ComponentCollection : public IComponentCollection {
     public:
         ComponentCollection(entity id, T& component) {
+			assert(id != null_entity && "Null entity cannot have components");
 			m_components.reserve(10);
 			m_components.push_back(component); // Unused, index 0 is for false
 			m_components.push_back(component);
@@ -40,6 +41,7 @@ namespace met {
 		 * @brief Insert a component to an entity
 		 */
 		void insert(entity id, T& component) {
+			assert(id != null_entity && "Null entity cannot have components");
 			m_components.push_back(component);
 			m_componentIndices.at(id) = m_components.size() - 1;
 		}
@@ -48,6 +50,7 @@ namespace met {
 		 * @brief Get the component of an entity
 		 */
 		T& at(entity id) {
+			assert(id != null_entity && "Null entity cannot have components");
 			return m_components.at(m_componentIndices.at(id));
 		}
 
@@ -55,6 +58,7 @@ namespace met {
 		 * @brief Check if an entity has the component
 		 */
 		bool has(entity id) const {
+			assert(id != null_entity && "Null entity cannot have components");
 			if (m_componentIndices.at(id) != 0) {
 				return true;
 			} else {

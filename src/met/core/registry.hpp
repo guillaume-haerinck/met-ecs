@@ -124,9 +124,9 @@ namespace met {
 			const ComponentCollection<Comp>* collection = getCollection<Comp>();
 			m_tempMatchCount = 0;
 
-			for (size_t i = 0; i <= collection->size(); ++i) {
-				if (collection->has(i)) {
-					m_tempMatchingEntities.at(m_tempMatchCount) = i;
+			for (entity id = 1; id <= collection->size(); ++id) {
+				if (collection->has(id)) {
+					m_tempMatchingEntities.at(m_tempMatchCount) = id;
 					m_tempMatchCount++;
 				}
 			}
