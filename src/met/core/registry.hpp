@@ -112,7 +112,7 @@ namespace met {
         template<typename Comp>
 		Comp& get(const entity id) {
 			ComponentCollection<Comp>* collection = getCollection<Comp>();
-            return collection->components.at(collection->componentIndices.at(id));
+            return collection->at(id);
         }
 
 	private:

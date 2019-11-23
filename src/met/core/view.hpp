@@ -46,7 +46,7 @@ namespace met {
          */
         template<typename Func, typename Tuple, std::size_t... I>
         void apply(entity id, Func&& consumer, const Tuple& compCollection, std::index_sequence<I...>) {
-            consumer(id, std::get<I>(compCollection)->components.at(std::get<I>(compCollection)->componentIndices.at(id))...);
+            consumer(id, std::get<I>(compCollection)->at(id)...);
         }
 
     private:

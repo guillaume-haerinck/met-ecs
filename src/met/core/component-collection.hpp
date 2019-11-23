@@ -41,6 +41,10 @@ namespace met {
 			componentIndices.at(id) = components.size() - 1;
 		}
 
+		T& at(entity id) {
+			return components.at(componentIndices.at(id));
+		}
+
     public:
         std::vector<T> components;
     };
