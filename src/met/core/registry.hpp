@@ -87,7 +87,6 @@ namespace met {
         /**
          * @brief Removes all of the components from the given entity
          */
-        template<typename T>
         void reset(entity id) {
 
         }
@@ -106,13 +105,11 @@ namespace met {
         View<Comps...> view() {
             // TODO fill with the first component active entities, then reduce with each new component were entities are inactive
             std::vector<met::entity> matchingEntities = {
-                0, 1, 2
+                1, 2
             };
 
-            View<Comps...> view(matchingEntities);
-
-			// TODO fill view constructor with each output of this fold expression
-			(std::cout << ... << reinterpret_cast<ComponentCollection<Comps>*>(m_componentCollectionIndices[typeid(Comps).name()])->components.data() );
+			// TODO do this for the Comps
+            View<Comps...> view(matchingEntities, getRawArray<Position>(), getRawArray<Velocity>());
 
             return view;
         }
@@ -120,15 +117,29 @@ namespace met {
         /**
          * @brief Get the asked component for the given entity
          */
-        template<typename T>
-        T& get(entity id) {
-            const std::type_info& type = typeid(T);
+        template<typename Comp>
+		Comp& get(entity id) {
+            const std::type_info& type = typeid(Comp);
             if (m_componentCollectionIndices.find(type.name()) != m_componentCollectionIndices.end()) {
-                unsigned int index = m_componentCollectionIndices[type.name()];
-                return reinterpret_cast<ComponentCollection<T>*>(m_componentCollections.at(index))->components.at(id);
+                const unsigned int index = m_componentCollectionIndices[type.name()];
+                return reinterpret_cast<ComponentCollection<Comp>*>(m_componentCollections.at(index))->components.at(id);
             }
             assert(false && "The entity does not have the required component(s)");
         }
+
+	private:
+		/**
+		 * @brief Get the raw array for the asked component
+		 */
+		template<typename Comp>
+		Comp* getRawArray() {
+			const std::type_info& type = typeid(Comp);
+			if (m_componentCollectionIndices.find(type.name()) != m_componentCollectionIndices.end()) {
+				const unsigned int index = m_componentCollectionIndices[type.name()];
+				return reinterpret_cast<ComponentCollection<Comp>*>(m_componentCollections.at(index))->components.data();
+			}
+			assert(false && "The component(s) type does not exist in the registry");
+		}
 
     private:
         entity m_entityCount;
