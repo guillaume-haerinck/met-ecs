@@ -33,7 +33,7 @@ namespace met {
 			m_components.reserve(10);
 			m_components.push_back(component); // Unused, index 0 is for false
 			m_components.push_back(component);
-			m_componentIndices.at(id) = m_components.size() - 1;
+			m_componentIndices.at(id) = static_cast<unsigned int>(m_components.size()) - 1;
 		};
 
         virtual ~ComponentCollection() {};
@@ -44,7 +44,7 @@ namespace met {
 		void insert(entity id, T& component) {
 			assert(id != null_entity && "Null entity cannot have components");
 			m_components.push_back(component);
-			m_componentIndices.at(id) = m_components.size() - 1;
+			m_componentIndices.at(id) = static_cast<unsigned int>(m_components.size()) - 1;
 		}
 
 		/**

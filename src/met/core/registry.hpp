@@ -19,7 +19,7 @@ namespace met {
         }
 
         ~Registry() {
-            for (auto* componentCollection : m_componentCollections) {
+            for (IComponentCollection* componentCollection : m_componentCollections) {
                 delete componentCollection;
             }
         }
@@ -61,9 +61,10 @@ namespace met {
         /**
          * @brief Says wether the entity has the given component or not
          */
-        template<typename T>
+        template<typename Comp>
         bool has(entity id) {
-            return true;
+			const ComponentCollection<Comp>* collection = getCollection<Comp>();
+            return collection->has(id);
         }
 
         /**
@@ -151,14 +152,6 @@ namespace met {
 		}
 
 		/**
-		 * @brief Get the raw array for the asked component
-		 */
-		template<typename Comp>
-		Comp* getRawArray() {
-			return getCollection<Comp>()->components.data();
-		}
-
-		/**
 		 * @brief Get the collection pointer of the asked component
 		 */
 		template<typename Comp>
@@ -176,6 +169,7 @@ namespace met {
 				return m_componentCollectionIndices[type.name()];
 			}
 			assert(false && "The component type does not exist in the registry");
+			return 0;
 		}
 
     private:
