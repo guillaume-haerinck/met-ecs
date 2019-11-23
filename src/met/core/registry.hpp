@@ -48,7 +48,7 @@ namespace met {
 
             if (collectionExist) {
                 unsigned int index = m_componentCollectionIndices[type.name()];
-                ComponentCollection<T>* collection = reinterpret_cast<ComponentCollection<T>*>(m_componentCollections.at(index));
+                ComponentCollection<T>* collection = static_cast<ComponentCollection<T>*>(m_componentCollections.at(index));
                 collection->components.at(id) = component;
                 collection->hasComponent.at(id) = true;
             } else {
@@ -104,7 +104,7 @@ namespace met {
         template<typename... Comps>
         View<Comps...> view() {
             // TODO fill with the first component active entities, then reduce with each new component were entities are inactive
-            std::vector<met::entity> matchingEntities = {
+            std::vector<entity> matchingEntities = {
                 1, 2
             };
 
@@ -117,12 +117,7 @@ namespace met {
          */
         template<typename Comp>
 		Comp& get(entity id) {
-            const std::type_info& type = typeid(Comp);
-            if (m_componentCollectionIndices.find(type.name()) != m_componentCollectionIndices.end()) {
-                const unsigned int index = m_componentCollectionIndices[type.name()];
-                return reinterpret_cast<ComponentCollection<Comp>*>(m_componentCollections.at(index))->components.at(id);
-            }
-            assert(false && "The entity does not have the required component(s)");
+            return static_cast<ComponentCollection<Comp>*>(m_componentCollections.at(getCollectionIndex<Comp>()))->components.at(id);
         }
 
 	private:
@@ -131,12 +126,19 @@ namespace met {
 		 */
 		template<typename Comp>
 		Comp* getRawArray() {
+			return static_cast<ComponentCollection<Comp>*>(m_componentCollections.at(getCollectionIndex<Comp>()))->components.data();
+		}
+
+		/**
+		 * @brief Get the index of the component collection inside of the vector of IComponentCollection*
+		 */
+		template<typename Comp>
+		unsigned int getCollectionIndex() {
 			const std::type_info& type = typeid(Comp);
 			if (m_componentCollectionIndices.find(type.name()) != m_componentCollectionIndices.end()) {
-				const unsigned int index = m_componentCollectionIndices[type.name()];
-				return reinterpret_cast<ComponentCollection<Comp>*>(m_componentCollections.at(index))->components.data();
+				return m_componentCollectionIndices[type.name()];
 			}
-			assert(false && "The component(s) type does not exist in the registry");
+			assert(false && "The component(s) type(s) does not exist(s) in the registry");
 		}
 
     private:

@@ -24,10 +24,8 @@ SCENARIO( "Views2 are supposed to ...", "[view]" ) {
 	pos = { 8, 4 };
 	vel = { 9 };
 	registry.assign<Position>(entity2, pos);
-	registry.assign<Velocity>(entity2, vel);
 
-    auto view = registry.view<Position, Velocity>();
-	view.each([](met::entity id, Position& pos, Velocity& vel) {
+    registry.view<Position, Velocity>().each([](met::entity id, Position& pos, Velocity& vel) {
 		std::cout << "It works for entity " << id << std::endl;
 		std::cout << "pos " << pos.x << " " << pos.y << std::endl;
 		std::cout << "vel " << vel.t << std::endl;

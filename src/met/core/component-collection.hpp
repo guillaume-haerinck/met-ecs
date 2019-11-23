@@ -16,7 +16,7 @@ namespace met {
             virtual ~IComponentCollection() {};
 
         public:
-            std::array<bool, MAX_ENTITIES> hasComponent; // Does the entity at this index use this component ?
+            std::array<bool, MAX_ENTITIES> hasComponent; // Says wether the entity at this index use this component
     };
 
     /**
