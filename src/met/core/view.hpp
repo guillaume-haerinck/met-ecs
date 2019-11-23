@@ -15,17 +15,24 @@ namespace met {
     class View {
     public:
         View(entity matchingEntitiesCount, entity* matchingEntities, Comps*... compArrays) 
-        : m_matchinEntitiesCount(matchingEntitiesCount), m_matchingEntities(matchingEntities), m_matchingComponentArrays(compArrays...) {}
+        : m_matchingEntitiesCount(matchingEntitiesCount), m_matchingEntities(matchingEntities), m_matchingComponentArrays(compArrays...) {}
 
         /**
          * @brief 
          */
         template<typename Func>
         void each(Func&& consumer) {
-			for (size_t i = 0; i < m_matchinEntitiesCount; i++) {
+			for (size_t i = 0; i < m_matchingEntitiesCount; i++) {
 				apply(m_matchingEntities[i], consumer, m_matchingComponentArrays, std::index_sequence_for<Comps...> {});
 			}
         }
+
+		/**
+		 * @brief Number of entities iterated by the view
+		 */
+		unsigned int size() {
+			return m_matchingEntitiesCount;
+		}
 
         // TODO implement iterator to allow for (entity id : myView) {} iterations
 
@@ -44,7 +51,7 @@ namespace met {
 
     private:
         entity* m_matchingEntities;
-		entity m_matchinEntitiesCount;
+		entity m_matchingEntitiesCount;
         std::tuple<Comps*...> m_matchingComponentArrays;
     };
 }

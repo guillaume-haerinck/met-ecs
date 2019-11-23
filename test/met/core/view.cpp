@@ -9,31 +9,39 @@ struct Position {
 };
 
 struct Velocity {
-    float t;
+    float dx;
+	float dy;
 };
 
-SCENARIO( "Views2 are supposed to ...", "[view]" ) {
-    met::Registry registry;
-    auto entity = registry.create();
-    Position pos = { 5, 2 };
-    Velocity vel = { 3 };
-    registry.assign<Position>(entity, pos);
-    registry.assign<Velocity>(entity, vel);
+SCENARIO( "Views are supposed to allow us to iterate through entities with a given set of components", "[view]" ) {
+	GIVEN( "A registry with multiple entities and components" ) {
+		met::Registry registry;
+		Position pos = { 5, 2 };
+		Velocity vel = { 3 };
 
-	auto entity2 = registry.create();
-	pos = { 8, 4 };
-	vel = { 9 };
-	registry.assign<Position>(entity2, pos);
-	// registry.assign<Velocity>(entity2, vel);
+		auto entity1 = registry.create();
+		registry.assign<Position>(entity1, pos);
+		registry.assign<Velocity>(entity1, vel);
 
-    registry.view<Position, Velocity>().each([](met::entity id, Position& pos, Velocity& vel) {
-		std::cout << "It works for entity " << id << std::endl;
-		std::cout << "pos " << pos.x << " " << pos.y << std::endl;
-		std::cout << "vel " << vel.t << std::endl;
-	});
+		auto entity2 = registry.create();
+		pos = { 8, 4 };
+		registry.assign<Position>(entity2, pos);
 
-	registry.view<Position>().each([](met::entity id, Position& pos) {
-		std::cout << "It works for entity " << id << std::endl;
-		std::cout << "pos " << pos.x << " " << pos.y << std::endl;
-	});
+		WHEN( "we ask for views" ) {
+			auto view1 = registry.view<Position, Velocity>();
+			auto view2 = registry.view<Position>();
+
+			THEN( "they should have the right number of matching entities" ) {
+				REQUIRE( view1.size() == 1 );
+				REQUIRE( view2.size() == 2 );
+			}
+
+			THEN( "we should be able to iterate through them with a lambda function" ) {
+				view1.each([vel](met::entity id, Position& storedPos, Velocity& storedVel) {
+					REQUIRE( vel.dx == storedVel.dx );
+					REQUIRE( vel.dy == storedVel.dy );
+				});
+			}
+		}
+	}
 }
