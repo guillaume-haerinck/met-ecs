@@ -88,7 +88,7 @@ namespace met {
         /**
          * @brief Remove the given components from the given entity
          */
-        template<typename T>
+        template<typename Comp>
         void remove(entity id) {
             ComponentCollection<Comp>* collection = getCollection<Comp>();
             collection->remove(id);
