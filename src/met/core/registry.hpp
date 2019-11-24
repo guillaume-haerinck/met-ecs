@@ -30,7 +30,7 @@ namespace met {
          * @brief Create a new entity
          */
         entity create() {
-			assert(m_lastEntityId < MAX_ENTITIES && "You reached MAX_ENTITIES");
+            assert(m_lastEntityId < MAX_ENTITIES && "You reached MAX_ENTITIES");
             return ++m_lastEntityId;
         }
 
@@ -65,7 +65,7 @@ namespace met {
          */
         template<typename Comp>
         bool has(entity id) const {
-			const ComponentCollection<Comp>* collection = getCollection<Comp>();
+            const ComponentCollection<Comp>* collection = getCollection<Comp>();
             return collection->has(id);
         }
 
@@ -73,17 +73,17 @@ namespace met {
          * @brief Says if the entity exist
          */
         bool valid(entity id) const {
-			if (id > m_lastEntityId) {
-				return false;
-			}
+            if (id > m_lastEntityId) {
+                return false;
+            }
 
-			for (entity unusedId : m_unusedEntityIndices) {
-				if (id == unusedId) {
-					return false;
-				}
-			}
+            for (entity unusedId : m_unusedEntityIndices) {
+                if (id == unusedId) {
+                    return false;
+                }
+            }
 
-			return true;
+            return true;
         }
 
         /**
@@ -113,8 +113,8 @@ namespace met {
          */
         template<typename Comp, typename... Comps>
         View<Comp, Comps...> view() {
-			fillMatchingEntities<Comp>();
-			(removeUnmatchingEntities<Comps>(), ...);
+            fillMatchingEntities<Comp>();
+            (removeUnmatchingEntities<Comps>(), ...);
             View<Comp, Comps...> view(m_tempMatchCount, m_tempMatchingEntities.data(), getCollection<Comp>(), getCollection<Comps>()...);
             return view;
         }
@@ -123,66 +123,66 @@ namespace met {
          * @brief Get the asked component for the given entity
          */
         template<typename Comp>
-		Comp& get(const entity id) {
-			ComponentCollection<Comp>* collection = getCollection<Comp>();
+        Comp& get(const entity id) {
+            ComponentCollection<Comp>* collection = getCollection<Comp>();
             return collection->at(id);
         }
 
-	private:
-		/**
-		 * @brief fill the m_tempMatchingEntities array with the entities which have the given component
-		 */
-		template<typename Comp>
-		void fillMatchingEntities() {
-			const ComponentCollection<Comp>* collection = getCollection<Comp>();
-			m_tempMatchCount = 0;
+    private:
+        /**
+         * @brief fill the m_tempMatchingEntities array with the entities which have the given component
+         */
+        template<typename Comp>
+        void fillMatchingEntities() {
+            const ComponentCollection<Comp>* collection = getCollection<Comp>();
+            m_tempMatchCount = 0;
 
-			for (entity id = 1; id <= collection->size(); ++id) {
-				if (collection->has(id)) {
-					m_tempMatchingEntities.at(m_tempMatchCount) = id;
-					m_tempMatchCount++;
-				}
-			}
-		}
+            for (entity id = 1; id <= collection->size(); ++id) {
+                if (collection->has(id)) {
+                    m_tempMatchingEntities.at(m_tempMatchCount) = id;
+                    m_tempMatchCount++;
+                }
+            }
+        }
 
-		/**
-		 * @brief Remove the entities which does not have the given component from m_tempMatchingEntities array
-		 */
-		template<typename Comp>
-		void removeUnmatchingEntities() {
-			const ComponentCollection<Comp>* collection = getCollection<Comp>();
+        /**
+         * @brief Remove the entities which does not have the given component from m_tempMatchingEntities array
+         */
+        template<typename Comp>
+        void removeUnmatchingEntities() {
+            const ComponentCollection<Comp>* collection = getCollection<Comp>();
 
-			for (size_t i = 0; i < m_tempMatchCount; ++i) {
-				const entity id = m_tempMatchingEntities.at(i);
+            for (size_t i = 0; i < m_tempMatchCount; ++i) {
+                const entity id = m_tempMatchingEntities.at(i);
 
-				if (!collection->has(id)) {
-					m_tempMatchingEntities.at(i) = m_tempMatchingEntities.at(i + 1);
-					m_tempMatchCount--;
-					i--;
-				}
-			}
-		}
+                if (!collection->has(id)) {
+                    m_tempMatchingEntities.at(i) = m_tempMatchingEntities.at(i + 1);
+                    m_tempMatchCount--;
+                    i--;
+                }
+            }
+        }
 
-		/**
-		 * @brief Get the collection pointer of the asked component
-		 */
-		template<typename Comp>
-		ComponentCollection<Comp>* getCollection() {
-			return static_cast<ComponentCollection<Comp>*>(m_componentCollections.at(getCollectionIndex<Comp>()));
-		}
+        /**
+         * @brief Get the collection pointer of the asked component
+         */
+        template<typename Comp>
+        ComponentCollection<Comp>* getCollection() {
+            return static_cast<ComponentCollection<Comp>*>(m_componentCollections.at(getCollectionIndex<Comp>()));
+        }
 
-		/**
-		 * @brief Get the index of the component collection inside of the vector of IComponentCollection*
-		 */
-		template<typename Comp>
-		unsigned int getCollectionIndex() {
-			const std::type_info& type = typeid(Comp);
-			if (m_componentCollectionIndices.find(type.name()) != m_componentCollectionIndices.end()) {
-				return m_componentCollectionIndices[type.name()];
-			}
-			assert(false && "The component type does not exist in the registry");
-			return 0;
-		}
+        /**
+         * @brief Get the index of the component collection inside of the vector of IComponentCollection*
+         */
+        template<typename Comp>
+        unsigned int getCollectionIndex() {
+            const std::type_info& type = typeid(Comp);
+            if (m_componentCollectionIndices.find(type.name()) != m_componentCollectionIndices.end()) {
+                return m_componentCollectionIndices[type.name()];
+            }
+            assert(false && "The component type does not exist in the registry");
+            return 0;
+        }
 
     private:
         entity m_lastEntityId;
@@ -190,9 +190,9 @@ namespace met {
         std::vector<IComponentCollection*> m_componentCollections;
         std::unordered_map<std::string, unsigned int> m_componentCollectionIndices;
 
-		// TODO Allow for multi-threading with std::async when matching entities with components to create views
-		// Have multiple independant compile-time arrays. 6 might be enough because 6 processor cores to work with is already a lot
-		std::array<entity, MAX_ENTITIES> m_tempMatchingEntities;
-		unsigned int m_tempMatchCount;
+        // TODO Allow for multi-threading with std::async when matching entities with components to create views
+        // Have multiple independant compile-time arrays. 6 might be enough because 6 processor cores to work with is already a lot
+        std::array<entity, MAX_ENTITIES> m_tempMatchingEntities;
+        unsigned int m_tempMatchCount;
     };
 }
