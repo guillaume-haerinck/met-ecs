@@ -16,7 +16,7 @@ namespace met {
      */
     class Registry {
     public:
-        Registry() : m_lastEntityId(0), m_tempMatchCount(0) {
+        Registry() : m_lastMaxEntityId(0), m_tempMatchCount(0) {
             m_componentCollections.reserve(MIN_COMPONENT_TYPES);
         }
 
@@ -30,15 +30,14 @@ namespace met {
          * @brief Create a new entity
          */
         entity create() {
-            assert(m_lastEntityId < MAX_ENTITIES && "You reached MAX_ENTITIES");
-            return ++m_lastEntityId;
-        }
+            if (m_unusedEntityIndices.size() > 0) {
+                unsigned int id = m_unusedEntityIndices.front();
+                m_unusedEntityIndices.pop_front();
+                return id;
+            }
 
-        /**
-         * @brief Destroy an entity and all of its components
-         */
-        void destroy(entity id) {
-
+            assert(m_lastMaxEntityId < MAX_ENTITIES && "You reached MAX_ENTITIES");
+            return ++m_lastMaxEntityId;
         }
 
         /**
@@ -73,7 +72,7 @@ namespace met {
          * @brief Says if the entity exist
          */
         bool valid(entity id) const {
-            if (id > m_lastEntityId) {
+            if (id > m_lastMaxEntityId) {
                 return false;
             }
 
@@ -91,21 +90,43 @@ namespace met {
          */
         template<typename T>
         void remove(entity id) {
+            ComponentCollection<Comp>* collection = getCollection<Comp>();
+            collection->remove(id);
+        }
 
+        /**
+         * @brief Destroy an entity and all of its components
+         */
+        void destroy(entity id) {
+            m_unusedEntityIndices.push_back(id);
+            for (IComponentCollection* collection : m_componentCollections) {
+                if (collection->has(id)) {
+                    collection->removeWithGap(id);
+                }
+            }
         }
 
         /**
          * @brief Removes all of the components from the given entity
          */
         void reset(entity id) {
-
+            for (IComponentCollection* collection : m_componentCollections) {
+                if (collection->has(id)) {
+                    collection->removeWithGap(id);
+                }
+            }
         }
 
         /**
          * @brief Destroy all of the components and all of the entities
          */
         void reset() {
-
+            m_unusedEntityIndices.clear();
+            m_componentCollectionIndices.clear();
+            for (IComponentCollection* componentCollection : m_componentCollections) {
+                delete componentCollection;
+            }
+            m_lastMaxEntityId = 0;
         }
 
         /**
@@ -185,7 +206,7 @@ namespace met {
         }
 
     private:
-        entity m_lastEntityId;
+        entity m_lastMaxEntityId;
         std::deque<entity> m_unusedEntityIndices;
         std::vector<IComponentCollection*> m_componentCollections;
         std::unordered_map<std::string, unsigned int> m_componentCollectionIndices;

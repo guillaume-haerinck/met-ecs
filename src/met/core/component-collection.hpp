@@ -19,7 +19,29 @@ namespace met {
         };
         virtual ~IComponentCollection() {};
 
+        /**
+         * @brief Check if an entity has the component
+         */
+        bool has(entity id) const {
+            assert(id != null_entity && "Null entity cannot have components");
+            if (m_componentIndices.at(id) != 0) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        /**
+         * @brief Removes the component from the given entity. Leaves a gap in the packed arrray.
+         * @note The gap will be filled with next insertion or sorting.
+         */
+        void removeWithGap(entity id) {
+            m_unsusedComponentIndices.push_back(m_componentIndices.at(id));
+            m_componentIndices.at(id) = 0;
+        }
+
     protected:
+        std::vector<unsigned int> m_unsusedComponentIndices; // Keep track of the gaps in the component array
         std::array<unsigned int, MAX_ENTITIES> m_componentIndices; // 0 if the entity at this index does not have this component
     };
 
@@ -48,17 +70,32 @@ namespace met {
          */
         void insert(entity id, T& component) {
             assert(id != null_entity && "Null entity cannot have components");
-            m_components.push_back(component);
-            m_componentToIndices.push_back(id);
-            m_componentIndices.at(id) = static_cast<unsigned int>(m_components.size()) - 1;
+
+            if (m_unsusedComponentIndices.size() > 0) {
+                // Get the hole index in the component array
+                unsigned int index = m_unsusedComponentIndices.at(m_unsusedComponentIndices.size() - 1);
+                m_unsusedComponentIndices.pop_back();
+
+                // Fill the hole
+                m_components.at(index) = component;
+                m_componentToIndices.at(index) = id;
+                m_componentIndices.at(id) = index;
+                return;
+            } else {
+                // Add a new component at the end of the packed array
+                m_components.push_back(component);
+                m_componentToIndices.push_back(id);
+                m_componentIndices.at(id) = static_cast<unsigned int>(m_components.size()) - 1;
+            }
         }
 
         /**
          * @brief Removes the component from the given entity
+         * @note The packed array of components stays packed, no holes in it
          */
         void remove(entity id) {
             // Fill deleted entity data position with last data
-            const auto lastIndex = m_components.size() - 1;
+            const unsigned int lastIndex = static_cast<unsigned int>(m_components.size() - 1);
             at(id) = at(lastIndex);
 
             // Gives the new index to the entity which had the last data
@@ -76,18 +113,6 @@ namespace met {
         T& at(entity id) {
             assert(id != null_entity && "Null entity cannot have components");
             return m_components.at(m_componentIndices.at(id));
-        }
-
-        /**
-         * @brief Check if an entity has the component
-         */
-        bool has(entity id) const {
-            assert(id != null_entity && "Null entity cannot have components");
-            if (m_componentIndices.at(id) != 0) {
-                return true;
-            } else {
-                return false;
-            }
         }
 
         /**

@@ -1,6 +1,7 @@
 #include <catch2/catch.hpp>
 #include <met/met.hpp>
 
+
 #include "common.hpp"
 
 SCENARIO("registry is supposed to handle entities and components", "[registry]") {
