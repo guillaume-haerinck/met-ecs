@@ -1,7 +1,7 @@
 #pragma once
 
 #ifndef MAX_ENTITIES
-    #define MAX_ENTITIES 32
+    #define MAX_ENTITIES 32 // TODO use dynamic array instead
 #endif
 
 #ifndef MIN_COMPONENT_TYPES

@@ -80,7 +80,6 @@ namespace met {
                 m_components.at(index) = component;
                 m_componentToIndices.at(index) = id;
                 m_componentIndices.at(id) = index;
-                return;
             } else {
                 // Add a new component at the end of the packed array
                 m_components.push_back(component);
@@ -94,6 +93,8 @@ namespace met {
          * @note The packed array of components stays packed, no holes in it
          */
         void remove(entity id) {
+            // TODO ensure that entity at lastIndex has the component (it could be a hole)
+
             // Fill deleted entity data position with last data
             const unsigned int lastIndex = static_cast<unsigned int>(m_components.size() - 1);
             at(id) = at(lastIndex);

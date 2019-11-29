@@ -3,21 +3,29 @@
 
 # Met ECS
 
-A simple ECS library made for learning purposes. The library is Header-Only, so just have to copy the `src` folder and include `met/met.hpp` to use it. 
-The API is heavly based on [ENTT](https://github.com/skypjack/entt) by skypjack. Made by students, the project purposes are to be easy to understand and thoroughly documented.
+A simple [Entity Component System](#what-is-ecs) library made for learning purposes. It is **header-only**, so just have to copy the content of the `src` folder and include `<met/met.hpp>` to check it out. It does require a C++ 17 version of your compiler though.
+
+Made by students, the project purposes are to be easy to understand and thoroughly documented. It is seen as an **entry point for users and developers**. We provide both a [post-mortem](docs/README.md) to explain the inner-working of the library, and many [exercices](learn/README.md) to get started with ECS.
+
+The API is heavly based on [ENTT](https://github.com/skypjack/entt) by skypjack, you should check it out if you're looking for a highly performant and production-ready library.
 
 ---
 
-> Violets are blue, roses are red, and when I met ecs, my world rebooted
+> Violets are blue, roses are red, and when I met ecs, my world rebooted 🌐
 
 ## Table of Contents
 
 * [Introduction](#introduction)
+	* [What is ECS ?](#what-is-ecs)
     * [Code Example](#code-example)
 * [Inspirations](#inspirations)
     * [Libraries](#libraries)
 
 ## Introduction
+
+### What is ECS ?
+
+ECS (Entity Component System) is way to organize your data and your logic which radicaly changes from traditional Object-Oriented Programming. It is seen as both a way to improve performance and to ease maintenance.
 
 ### Code Example
 

@@ -34,10 +34,10 @@ namespace met {
                 unsigned int id = m_unusedEntityIndices.front();
                 m_unusedEntityIndices.pop_front();
                 return id;
+            } else {
+                assert(m_lastMaxEntityId < MAX_ENTITIES && "You reached MAX_ENTITIES");
+                return ++m_lastMaxEntityId;
             }
-
-            assert(m_lastMaxEntityId < MAX_ENTITIES && "You reached MAX_ENTITIES");
-            return ++m_lastMaxEntityId;
         }
 
         /**

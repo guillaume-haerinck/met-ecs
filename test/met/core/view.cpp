@@ -30,7 +30,7 @@ SCENARIO("Views are supposed to allow us to iterate through entities with a give
                 view1.each([vel](met::entity id, Position& storedPos, Velocity& storedVel) {
                     REQUIRE(vel.dx == storedVel.dx);
                     REQUIRE(vel.dy == storedVel.dy);
-                    });
+                });
             }
 
             THEN("we should be able to modify components in a lambda function") {
@@ -38,12 +38,12 @@ SCENARIO("Views are supposed to allow us to iterate through entities with a give
 
                 view1.each([vel](met::entity id, Position& storedPos, Velocity& storedVel) {
                     storedVel = vel;
-                    });
+                });
 
                 view1.each([vel](met::entity id, Position& storedPos, Velocity& storedVel) {
                     REQUIRE(vel.dx == storedVel.dx);
                     REQUIRE(vel.dy == storedVel.dy);
-                    });
+                });
             }
         }
     }
