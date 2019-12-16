@@ -34,20 +34,10 @@ namespace met {
             }
         }
 
-        /**
-         * @brief Removes the component from the given entity. Leaves a gap in the packed arrray.
-         * @note The gap will be filled with next insertion or sorting.
-         */
-        void removeWithGap(entity id) {
-            assert(id != null_entity && "Null entity cannot have components");
-            assert(id <= m_componentIndices.size() && "id is larger than component size");
-
-            m_unsusedComponentIndices.push_back(m_componentIndices.at(id));
-            m_componentIndices.at(id) = 0;
-        }
+        virtual void remove(entity id) = 0;
+        virtual size_t size() const = 0;
 
     protected:
-        std::vector<unsigned int> m_unsusedComponentIndices; // Keep track of the gaps in the component array
         std::vector<unsigned int> m_componentIndices; // 0 if the entity at this index does not have this component
     };
 
@@ -84,28 +74,17 @@ namespace met {
                 }
             }
 
-            if (m_unsusedComponentIndices.size() > 0) {
-                // Get the hole index in the component array
-                unsigned int index = m_unsusedComponentIndices.at(m_unsusedComponentIndices.size() - 1);
-                m_unsusedComponentIndices.pop_back();
-
-                // Fill the hole
-                m_components.at(index) = component;
-                m_componentToIndices.at(index) = id;
-                m_componentIndices.at(id) = index;
-            } else {
-                // Add a new component at the end of the packed array
-                m_components.push_back(component);
-                m_componentToIndices.push_back(id);
-                m_componentIndices.at(id) = static_cast<unsigned int>(m_components.size()) - 1;
-            }
+            // Add a new component at the end of the packed array
+            m_components.push_back(component);
+            m_componentToIndices.push_back(id);
+            m_componentIndices.at(id) = static_cast<unsigned int>(m_components.size()) - 1;
         }
 
         /**
          * @brief Removes the component from the given entity
          * @note The packed array of components stays packed, no holes in it
          */
-        void remove(entity id) {
+        void remove(entity id) override {
             // TODO ensure that entity at lastIndex has the component (it could be a hole). 
             // It will not be if we remove the function "removeWithGaps"
 
@@ -133,7 +112,7 @@ namespace met {
         /**
          * @brief Get the number of entities which uses this component type
          */
-        size_t size() const {
+        size_t size() const override {
             return m_components.size() - 1;
         }
 

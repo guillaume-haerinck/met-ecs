@@ -101,8 +101,7 @@ namespace met {
             m_unusedEntityIndices.push_back(id);
             for (IComponentCollection* collection : m_componentCollections) {
                 if (collection->has(id)) {
-                    // TODO find a way to make a cast from here and use "remove" instead. (remove with gap is inelegant)
-                    collection->removeWithGap(id);
+                    collection->remove(id);
                 }
             }
         }
@@ -113,7 +112,7 @@ namespace met {
         void reset(entity id) {
             for (IComponentCollection* collection : m_componentCollections) {
                 if (collection->has(id)) {
-                    collection->removeWithGap(id);
+                    collection->remove(id);
                 }
             }
         }

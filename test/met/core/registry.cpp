@@ -18,6 +18,12 @@ SCENARIO("registry is supposed to handle entities and components", "[registry]")
                 REQUIRE(entity1 != entity3);
                 REQUIRE(entity2 != entity3);
             }
+
+            THEN("they should be destructible") {
+                registry.destroy(entity1);
+
+                REQUIRE(!registry.valid(entity1));
+            }
         }
         WHEN("we assign a component") {
             met::entity entity = registry.create();
