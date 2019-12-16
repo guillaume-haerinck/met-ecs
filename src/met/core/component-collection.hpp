@@ -10,7 +10,7 @@ namespace met {
     /**
      * @brief Abstract class used to store an array of ComponentCollections
      * @note The data structure is a kind of sparse set.
-     *       ComponentIndicies being sparse array, and components of concrete classes being dense array
+     *       m_componentIndices being sparse array, and m_components being dense array
      */
     class IComponentCollection {
     public:
@@ -69,9 +69,7 @@ namespace met {
 
             if (m_componentIndices.size() <= id) {
                 m_componentIndices.resize(id + 10);
-                for (int i = id; i < m_componentIndices.size(); i++) {
-                    m_componentIndices.at(i) = 0;
-                }
+                std::fill(m_componentIndices.begin() + id, m_componentIndices.end(), 0);
             }
 
             // Add a new component at the end of the packed array
@@ -85,8 +83,7 @@ namespace met {
          * @note The packed array of components stays packed, no holes in it
          */
         void remove(entity id) override {
-            // TODO ensure that entity at lastIndex has the component (it could be a hole). 
-            // It will not be if we remove the function "removeWithGaps"
+            assert(has(id) && "The entity does not have this component");
 
             // Fill deleted entity data position with last data
             const unsigned int lastIndex = static_cast<unsigned int>(m_components.size() - 1);
