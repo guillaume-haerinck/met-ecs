@@ -18,6 +18,7 @@ namespace met {
     public:
         Registry() : m_lastMaxEntityId(0), m_tempMatchCount(0) {
             m_componentCollections.reserve(MIN_COMPONENT_TYPES);
+            m_tempMatchingEntities.resize(MIN_ENTITIES);
         }
 
         ~Registry() {
@@ -35,7 +36,6 @@ namespace met {
                 m_unusedEntityIndices.pop_front();
                 return id;
             } else {
-                assert(m_lastMaxEntityId < MAX_ENTITIES && "You reached MAX_ENTITIES");
                 return ++m_lastMaxEntityId;
             }
         }
@@ -213,7 +213,7 @@ namespace met {
 
         // TODO Allow for multi-threading with std::async when matching entities with components to create views
         // Have multiple independant compile-time arrays. 6 might be enough because 6 processor cores to work with is already a lot
-        std::array<entity, MAX_ENTITIES> m_tempMatchingEntities;
+        std::vector<entity> m_tempMatchingEntities;
         unsigned int m_tempMatchCount;
     };
 }

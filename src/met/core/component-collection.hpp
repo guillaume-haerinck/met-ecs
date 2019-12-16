@@ -15,7 +15,7 @@ namespace met {
     class IComponentCollection {
     public:
         IComponentCollection() {
-            m_componentIndices.fill(0);
+            m_componentIndices.resize(MIN_ENTITIES);
         };
         virtual ~IComponentCollection() {};
 
@@ -42,7 +42,7 @@ namespace met {
 
     protected:
         std::vector<unsigned int> m_unsusedComponentIndices; // Keep track of the gaps in the component array
-        std::array<unsigned int, MAX_ENTITIES> m_componentIndices; // 0 if the entity at this index does not have this component
+        std::vector<unsigned int> m_componentIndices; // 0 if the entity at this index does not have this component
     };
 
     /**
@@ -52,8 +52,8 @@ namespace met {
     class ComponentCollection : public IComponentCollection {
     public:
         ComponentCollection(entity id, T& component) {
-            m_components.reserve(10);
-            m_componentToIndices.reserve(10);
+            m_components.reserve(MIN_ENTITIES);
+            m_componentToIndices.reserve(MIN_ENTITIES);
 
             // Unused, index 0 is for false
             m_components.push_back(component);
