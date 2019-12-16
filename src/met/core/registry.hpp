@@ -134,6 +134,7 @@ namespace met {
          */
         template<typename Comp, typename... Comps>
         View<Comp, Comps...> view() {
+            m_tempMatchingEntities.clear();
             fillMatchingEntities<Comp>();
             (removeUnmatchingEntities<Comps>(), ...);
             View<Comp, Comps...> view(m_tempMatchingEntities.size(), m_tempMatchingEntities.data(), getCollection<Comp>(), getCollection<Comps>()...);
@@ -156,8 +157,6 @@ namespace met {
         template<typename Comp>
         void fillMatchingEntities() {
             const ComponentCollection<Comp>* collection = getCollection<Comp>();
-            m_tempMatchingEntities.clear();
-
             for (entity id = 1; id <= collection->size(); ++id) {
                 if (collection->has(id)) {
                     m_tempMatchingEntities.push_back(id);
@@ -171,10 +170,8 @@ namespace met {
         template<typename Comp>
         void removeUnmatchingEntities() {
             const ComponentCollection<Comp>* collection = getCollection<Comp>();
-
             for (size_t i = 0; i < m_tempMatchingEntities.size(); ++i) {
                 const entity id = m_tempMatchingEntities.at(i);
-
                 if (!collection->has(id)) {
                     m_tempMatchingEntities.erase(m_tempMatchingEntities.begin() + i);
                 }
@@ -207,9 +204,6 @@ namespace met {
         std::deque<entity> m_unusedEntityIndices;
         std::vector<IComponentCollection*> m_componentCollections;
         std::unordered_map<std::string, unsigned int> m_componentCollectionIndices;
-
-        // TODO Allow for multi-threading with std::async when matching entities with components to create views
-        // Have multiple independant compile-time arrays. 6 might be enough because 6 processor cores to work with is already a lot
         std::vector<entity> m_tempMatchingEntities;
     };
 }
