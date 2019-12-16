@@ -36,8 +36,6 @@ namespace met {
                 m_unusedEntityIndices.pop_front();
                 return id;
             } else {
-                // TODO if exceed m_tempMatchingEntities size, resize it and component collections as well
-                // (componentIndices and componentToIndices). Use private function, and make registry friend to component collection to access it
                 return ++m_lastMaxEntityId;
             }
         }

@@ -24,7 +24,10 @@ namespace met {
          */
         bool has(entity id) const {
             assert(id != null_entity && "Null entity cannot have components");
-            if (m_componentIndices.at(id) != 0) {
+
+            if (id > m_componentIndices.size()) {
+                return false;
+            } else if (m_componentIndices.at(id) != 0) {
                 return true;
             } else {
                 return false;
@@ -36,6 +39,9 @@ namespace met {
          * @note The gap will be filled with next insertion or sorting.
          */
         void removeWithGap(entity id) {
+            assert(id != null_entity && "Null entity cannot have components");
+            assert(id <= m_componentIndices.size() && "id is larger than component size");
+
             m_unsusedComponentIndices.push_back(m_componentIndices.at(id));
             m_componentIndices.at(id) = 0;
         }
@@ -81,6 +87,10 @@ namespace met {
                 m_componentToIndices.at(index) = id;
                 m_componentIndices.at(id) = index;
             } else {
+                if (m_componentIndices.size() <= id) {
+                    m_componentIndices.resize(id + 10);
+                }
+
                 // Add a new component at the end of the packed array
                 m_components.push_back(component);
                 m_componentToIndices.push_back(id);
