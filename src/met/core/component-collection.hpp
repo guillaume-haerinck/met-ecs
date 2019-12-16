@@ -106,7 +106,8 @@ namespace met {
          * @note The packed array of components stays packed, no holes in it
          */
         void remove(entity id) {
-            // TODO ensure that entity at lastIndex has the component (it could be a hole)
+            // TODO ensure that entity at lastIndex has the component (it could be a hole). 
+            // It will not be if we remove the function "removeWithGaps"
 
             // Fill deleted entity data position with last data
             const unsigned int lastIndex = static_cast<unsigned int>(m_components.size() - 1);
