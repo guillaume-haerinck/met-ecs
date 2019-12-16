@@ -27,7 +27,7 @@ namespace met {
 
             if (id > m_componentIndices.size()) {
                 return false;
-            } else if (m_componentIndices.at(id) != 0) {
+            } else if (m_componentIndices.at(id) != null_component) {
                 return true;
             } else {
                 return false;
@@ -38,7 +38,7 @@ namespace met {
         virtual size_t size() const = 0;
 
     protected:
-        std::vector<unsigned int> m_componentIndices; // 0 if the entity at this index does not have this component
+        std::vector<unsigned int> m_componentIndices;
     };
 
     /**
@@ -51,9 +51,9 @@ namespace met {
             m_components.reserve(MIN_ENTITIES);
             m_componentToIndices.reserve(MIN_ENTITIES);
 
-            // Unused, index 0 is for false
+            // Unused, allow entity id to match array id
             m_components.push_back(component);
-            m_componentToIndices.push_back(0);
+            m_componentToIndices.push_back(null_component);
 
             // Add first entity
             insert(id, component);
@@ -69,7 +69,7 @@ namespace met {
 
             if (m_componentIndices.size() <= id) {
                 m_componentIndices.resize(id + 10);
-                std::fill(m_componentIndices.begin() + id, m_componentIndices.end(), 0);
+                std::fill(m_componentIndices.begin() + id, m_componentIndices.end(), null_component);
             }
 
             // Add a new component at the end of the packed array
@@ -93,7 +93,7 @@ namespace met {
             m_componentIndices.at(m_componentToIndices.at(lastIndex)) = m_componentIndices.at(id);
 
             // Removes unsused data
-            m_componentIndices.at(id) = 0;
+            m_componentIndices.at(id) = null_component;
             m_components.pop_back();
             m_componentToIndices.pop_back();
         }

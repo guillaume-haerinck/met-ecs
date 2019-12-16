@@ -11,4 +11,5 @@
 namespace met {
     using entity = unsigned int;
     const static entity null_entity = 0;
+    const static unsigned int null_component = 0;
 }
