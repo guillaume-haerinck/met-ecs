@@ -77,6 +77,13 @@ namespace met {
         void insert(entity id, T& component) {
             assert(id != null_entity && "Null entity cannot have components");
 
+            if (m_componentIndices.size() <= id) {
+                m_componentIndices.resize(id + 10);
+                for (int i = id; i < m_componentIndices.size(); i++) {
+                    m_componentIndices.at(i) = 0;
+                }
+            }
+
             if (m_unsusedComponentIndices.size() > 0) {
                 // Get the hole index in the component array
                 unsigned int index = m_unsusedComponentIndices.at(m_unsusedComponentIndices.size() - 1);
@@ -87,10 +94,6 @@ namespace met {
                 m_componentToIndices.at(index) = id;
                 m_componentIndices.at(id) = index;
             } else {
-                if (m_componentIndices.size() <= id) {
-                    m_componentIndices.resize(id + 10);
-                }
-
                 // Add a new component at the end of the packed array
                 m_components.push_back(component);
                 m_componentToIndices.push_back(id);
