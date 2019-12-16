@@ -16,9 +16,9 @@ namespace met {
      */
     class Registry {
     public:
-        Registry() : m_lastMaxEntityId(0), m_tempMatchCount(0) {
+        Registry() : m_lastMaxEntityId(0) {
             m_componentCollections.reserve(MIN_COMPONENT_TYPES);
-            m_tempMatchingEntities.resize(MIN_ENTITIES);
+            m_tempMatchingEntities.reserve(MIN_ENTITIES);
         }
 
         ~Registry() {
@@ -36,6 +36,8 @@ namespace met {
                 m_unusedEntityIndices.pop_front();
                 return id;
             } else {
+                // TODO if exceed m_tempMatchingEntities size, resize it and component collections as well
+                // (componentIndices and componentToIndices). Use private function, and make registry friend to component collection to access it
                 return ++m_lastMaxEntityId;
             }
         }
@@ -136,7 +138,7 @@ namespace met {
         View<Comp, Comps...> view() {
             fillMatchingEntities<Comp>();
             (removeUnmatchingEntities<Comps>(), ...);
-            View<Comp, Comps...> view(m_tempMatchCount, m_tempMatchingEntities.data(), getCollection<Comp>(), getCollection<Comps>()...);
+            View<Comp, Comps...> view(m_tempMatchingEntities.size(), m_tempMatchingEntities.data(), getCollection<Comp>(), getCollection<Comps>()...);
             return view;
         }
 
@@ -156,12 +158,11 @@ namespace met {
         template<typename Comp>
         void fillMatchingEntities() {
             const ComponentCollection<Comp>* collection = getCollection<Comp>();
-            m_tempMatchCount = 0;
+            m_tempMatchingEntities.clear();
 
             for (entity id = 1; id <= collection->size(); ++id) {
                 if (collection->has(id)) {
-                    m_tempMatchingEntities.at(m_tempMatchCount) = id;
-                    m_tempMatchCount++;
+                    m_tempMatchingEntities.push_back(id);
                 }
             }
         }
@@ -173,13 +174,11 @@ namespace met {
         void removeUnmatchingEntities() {
             const ComponentCollection<Comp>* collection = getCollection<Comp>();
 
-            for (size_t i = 0; i < m_tempMatchCount; ++i) {
+            for (size_t i = 0; i < m_tempMatchingEntities.size(); ++i) {
                 const entity id = m_tempMatchingEntities.at(i);
 
                 if (!collection->has(id)) {
-                    m_tempMatchingEntities.at(i) = m_tempMatchingEntities.at(i + 1);
-                    m_tempMatchCount--;
-                    i--;
+                    m_tempMatchingEntities.erase(m_tempMatchingEntities.begin() + i);
                 }
             }
         }
@@ -214,6 +213,5 @@ namespace met {
         // TODO Allow for multi-threading with std::async when matching entities with components to create views
         // Have multiple independant compile-time arrays. 6 might be enough because 6 processor cores to work with is already a lot
         std::vector<entity> m_tempMatchingEntities;
-        unsigned int m_tempMatchCount;
     };
 }
