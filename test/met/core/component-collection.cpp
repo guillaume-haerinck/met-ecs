@@ -28,4 +28,32 @@ SCENARIO("Component collections are supposed to handle component storage, deleti
             }
         }
     }
+
+    GIVEN("A collection with 10 components") {
+        Position pos = { 0, 0 };
+        met::ComponentCollection<Position> collection(1, pos);
+        for (unsigned int i = 2; i < 10; i++) {
+            pos = { (float) i, (float) i };
+            collection.insert(i, pos);
+        }
+        
+        // FIXME at 8 it changes the 6 but it shouldn't
+        WHEN("we remove half of the components") {
+            for (unsigned int i = 2; i < 10; i++) {
+                if (i % 2 == 0)
+                    collection.remove(i);
+            }
+
+            THEN("the size should match 5") {
+                REQUIRE(collection.size() == 5);
+            }
+
+            THEN("the removed indices should be null") {
+                for (unsigned int i = 2; i < 10; i++) {
+                    if (i % 2 == 0)
+                        REQUIRE(collection.has(i) == false);
+                }
+            }
+        }
+    }
 }

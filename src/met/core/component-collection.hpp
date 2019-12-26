@@ -9,13 +9,12 @@
 namespace met {
     /**
      * @brief Abstract class used to store an array of ComponentCollections
-     * @note The data structure is a kind of sparse set.
-     *       m_componentIndices being sparse array, and m_components being dense array
+     * @note The data structure is a modified sparse set.
      */
     class IComponentCollection {
     public:
         IComponentCollection() {
-            m_componentIndices.resize(MIN_ENTITIES);
+            m_entityToComponentIndex.resize(MIN_ENTITIES);
         };
         virtual ~IComponentCollection() {};
 
@@ -25,9 +24,9 @@ namespace met {
         bool has(entity id) const {
             assert(id != null_entity && "Null entity cannot have components");
 
-            if (id > m_componentIndices.size()) {
+            if (id > m_entityToComponentIndex.size()) {
                 return false;
-            } else if (m_componentIndices.at(id) != null_component) {
+            } else if (m_entityToComponentIndex.at(id) != null_component) {
                 return true;
             } else {
                 return false;
@@ -38,7 +37,7 @@ namespace met {
         virtual size_t size() const = 0;
 
     protected:
-        std::vector<unsigned int> m_componentIndices;
+        std::vector<unsigned int> m_entityToComponentIndex;
     };
 
     /**
@@ -49,11 +48,11 @@ namespace met {
     public:
         ComponentCollection(entity id, T& component) {
             m_components.reserve(MIN_ENTITIES);
-            m_componentToIndices.reserve(MIN_ENTITIES);
+            m_componentIndexToEntity.reserve(MIN_ENTITIES);
 
             // Unused, allow entity id to match array id
             m_components.push_back(component);
-            m_componentToIndices.push_back(null_component);
+            m_componentIndexToEntity.push_back(null_component);
 
             // Add first entity
             insert(id, component);
@@ -67,35 +66,35 @@ namespace met {
         void insert(entity id, T& component) {
             assert(id != null_entity && "Null entity cannot have components");
 
-            if (m_componentIndices.size() <= id) {
-                m_componentIndices.resize(id + 10);
-                std::fill(m_componentIndices.begin() + id, m_componentIndices.end(), null_component);
+            if (m_entityToComponentIndex.size() <= id) {
+                m_entityToComponentIndex.resize(id + 10);
+                std::fill(m_entityToComponentIndex.begin() + id, m_entityToComponentIndex.end(), null_component);
             }
 
             // Add a new component at the end of the packed array
             m_components.push_back(component);
-            m_componentToIndices.push_back(id);
-            m_componentIndices.at(id) = static_cast<unsigned int>(m_components.size()) - 1;
+            m_componentIndexToEntity.push_back(id);
+            m_entityToComponentIndex.at(id) = static_cast<unsigned int>(m_components.size()) - 1;
         }
 
         /**
          * @brief Removes the component from the given entity
-         * @note The packed array of components stays packed, no holes in it
          */
         void remove(entity id) override {
             assert(has(id) && "The entity does not have this component");
 
-            // Fill deleted entity data position with last data
-            const unsigned int lastIndex = static_cast<unsigned int>(m_components.size() - 1);
-            at(id) = at(lastIndex);
+            // Fill deleted entity data position with last valid data
+            const unsigned int lastComponentIndex = static_cast<unsigned int>(m_components.size() - 1);
+            at(id) = at(lastComponentIndex);
 
             // Gives the new index to the entity which had the last data
-            m_componentIndices.at(m_componentToIndices.at(lastIndex)) = m_componentIndices.at(id);
+            // FIXME
+            // m_entityToComponentIndex.at(m_componentIndexToEntity.at(lastComponentIndex)) = m_entityToComponentIndex.at(id);
 
             // Removes unsused data
-            m_componentIndices.at(id) = null_component;
+            m_entityToComponentIndex.at(id) = null_component;
             m_components.pop_back();
-            m_componentToIndices.pop_back();
+            m_componentIndexToEntity.pop_back();
         }
 
         /**
@@ -103,7 +102,7 @@ namespace met {
          */
         T& at(entity id) {
             assert(id != null_entity && "Null entity cannot have components");
-            return m_components.at(m_componentIndices.at(id));
+            return m_components.at(m_entityToComponentIndex.at(id));
         }
 
         /**
@@ -116,7 +115,7 @@ namespace met {
         // TODO handle sorting
 
     private:
-        std::vector<unsigned int> m_componentToIndices; // Gives the entity which has the component at the given index of m_components
+        std::vector<unsigned int> m_componentIndexToEntity;
         std::vector<T> m_components;
     };
 }
