@@ -81,5 +81,48 @@ SCENARIO("registry is supposed to handle entities and components", "[registry]")
                 }
             }
         }
+        WHEN("we create 3 entities with 2 components each") {
+            for (size_t i = 0; i < 4; i++) {
+                met::entity id = registry.create();
+                Position pos = { (float) i, (float) i };
+                Velocity vel = { (float) i, (float) i };
+                registry.assign<Position>(id, pos);
+                registry.assign<Velocity>(id, vel);
+            }
+            
+            THEN("we should be able to get them back") {
+                unsigned int i = 0;
+                registry.view<Position, Velocity>().each([&i](met::entity id, Position pos, Velocity vel) {
+                    Position checkPos = { (float) i, (float) i };
+                    Velocity checkVel = { (float) i, (float) i };
+                    i++;
+
+                    REQUIRE(pos.x == checkPos.x);
+                    REQUIRE(pos.y == checkPos.y);
+
+                    REQUIRE(vel.dx == checkVel.dx);
+                    REQUIRE(vel.dy == checkVel.dy);
+                });
+            }
+
+            AND_WHEN("we delete the 2nd entity") {
+                registry.destroy(2);
+
+                THEN("it shouldn't affect other entities") {
+                    unsigned int i = 0;
+                    registry.view<Position, Velocity>().each([&i](met::entity id, Position pos, Velocity vel) {
+                        Position checkPos = { (float) i, (float) i };
+                        Velocity checkVel = { (float) i, (float) i };
+                        i += 2;
+
+                        REQUIRE(pos.x == checkPos.x);
+                        REQUIRE(pos.y == checkPos.y);
+
+                        REQUIRE(vel.dx == checkVel.dx);
+                        REQUIRE(vel.dy == checkVel.dy);
+                    });
+                }
+            }
+        }
     }
 }
