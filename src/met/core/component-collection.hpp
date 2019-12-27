@@ -69,9 +69,14 @@ namespace met {
                 std::fill(m_sparse.begin() + id, m_sparse.end(), null);
             }
 
-            // Add a new component at the end of the packed array
-            m_dense.push_back(component);
-            m_sparse.at(id) = static_cast<unsigned int>(m_dense.size()) - 1;
+            if (m_sparse.at(id) != null) {
+                // Overwrite existing component
+                at(id) = component;
+            } else {
+                // Add a new component at the end of the packed array
+                m_dense.push_back(component);
+                m_sparse.at(id) = static_cast<unsigned int>(m_dense.size()) - 1;
+            } 
         }
 
         /**

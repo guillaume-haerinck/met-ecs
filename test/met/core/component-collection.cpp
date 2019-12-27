@@ -65,5 +65,21 @@ SCENARIO("Component collections are supposed to handle component storage, deleti
                 }
             }
         }
+
+        WHEN("we overwrite existing components") {
+            for (unsigned int i = 1; i < 10; i++) {
+                pos = { (float) i + 1, (float) i + 1};
+                collection.insert(i, pos);
+            }
+
+            THEN("the stored data should match the overwrite") {
+                for (unsigned int i = 1; i < 10; i++) {
+                    pos = { (float) i + 1, (float) i + 1 };
+                    REQUIRE(collection.has(i) == true);
+                    REQUIRE(pos.x == collection.at(i).x);
+                    REQUIRE(pos.y == collection.at(i).y);
+                }
+            }
+        }
     }
 }
