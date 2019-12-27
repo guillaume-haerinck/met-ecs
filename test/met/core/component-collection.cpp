@@ -5,12 +5,20 @@
 
 SCENARIO("Component collections are supposed to handle component storage, deletion and sorting", "[component-collection]") {
     GIVEN("A collection with 3 components") {
-        Position pos = { 57, 50 };
-        met::ComponentCollection<Position> collection(1, pos);
-        pos = { 84, 52 };
-        collection.insert(2, pos);
-        pos = { 48, 21 };
-        collection.insert(3, pos);
+        Position pos1 = { 57, 50 };
+        met::ComponentCollection<Position> collection(1, pos1);
+        Position pos2 = { 84, 52 };
+        collection.insert(2, pos2);
+        Position pos3 = { 48, 21 };
+        collection.insert(3, pos3);
+
+        REQUIRE(collection.has(1) == true);
+        REQUIRE(collection.has(2) == true);
+        REQUIRE(collection.has(3) == true);
+
+        REQUIRE(collection.at(1).x == pos1.x);
+        REQUIRE(collection.at(2).x == pos2.x);
+        REQUIRE(collection.at(3).x == pos3.x);
 
         WHEN("we remove a component from an entity") {
             collection.remove(2);
@@ -20,8 +28,12 @@ SCENARIO("Component collections are supposed to handle component storage, deleti
             }
             THEN("it shouldn't affect other entities") {
                 Position storedPos = collection.at(3);
-                REQUIRE(storedPos.x == pos.x);
-                REQUIRE(storedPos.y == pos.y);
+                REQUIRE(storedPos.x == pos3.x);
+                REQUIRE(storedPos.y == pos3.y);
+
+                storedPos = collection.at(1);
+                REQUIRE(storedPos.x == pos1.x);
+                REQUIRE(storedPos.y == pos1.y);
             }
             THEN("the size should match the number of components in use") {
                 REQUIRE(collection.size() == 2);
