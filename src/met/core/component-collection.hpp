@@ -52,9 +52,12 @@ namespace met {
     public:
         ComponentCollection(entity id, T& component) {
             m_dense.reserve(MIN_ENTITIES);
+            m_components.reserve(MIN_ENTITIES);
 
             // Unused, allow entity id to match array id
-            m_dense.push_back(component);
+            m_components.push_back(component);
+            m_dense.push_back(null);
+            m_sparse.at(0) = null;
 
             // Add first entity
             insert(id, component);
@@ -78,7 +81,8 @@ namespace met {
                 at(id) = component;
             } else {
                 // Add a new component at the end of the packed array
-                m_dense.push_back(component);
+                m_components.push_back(component);
+                m_dense.push_back(id);
                 m_sparse.at(id) = static_cast<unsigned int>(m_dense.size()) - 1;
             } 
         }
@@ -88,23 +92,19 @@ namespace met {
          */
         void remove(entity id) override {
             assert(has(id) && "The entity does not have this component");
+      
+            // Find owner of last component
+            const unsigned int lastComponentOwner = m_dense.at(m_components.size() - 1);
 
             // Move last component to removed component
-            m_dense.at(m_sparse.at(id)) = m_dense.at(m_dense.size() - 1);
-            
-            // Find owner of last component
-            unsigned int lastComponentOwner = null;
-            for (unsigned int i = 1; i < m_sparse.size(); i++) {
-                if (m_sparse.at(i) == m_dense.size() - 1) {
-                    lastComponentOwner = i;
-                    break;
-                }
-            }
-
-            // Update ownership of components
+            m_components.at(m_sparse.at(id)) = m_components.at(m_components.size() - 1);
+            m_dense.at(m_sparse.at(id)) = lastComponentOwner;
             m_sparse.at(lastComponentOwner) = m_sparse.at(id);
+            
+            // Remove unsused data
             m_sparse.at(id) = null;
             m_dense.pop_back();
+            m_components.pop_back();
         }
 
         /**
@@ -112,19 +112,20 @@ namespace met {
          */
         T& at(entity id) {
             assert(has(id) && "The entity does not have this component");
-            return m_dense.at(m_sparse.at(id));
+            return m_components.at(m_sparse.at(id));
         }
 
         /**
          * @brief Get the number of entities which uses this component type
          */
         size_t size() const override {
-            return m_dense.size() - 1;
+            return m_components.size() - 1;
         }
 
         // TODO handle sorting
 
     private:
-        std::vector<T> m_dense; // Components
+        std::vector<unsigned int> m_dense; // Component index to entity
+        std::vector<T> m_components;
     };
 }
