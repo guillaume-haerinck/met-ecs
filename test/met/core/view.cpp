@@ -5,7 +5,7 @@
 
 SCENARIO("Views are supposed to allow us to iterate through entities with a given set of components", "[view]") {
     GIVEN("A registry with 2 entities and 2 components") {
-        met::Registry registry;
+        met::registry registry;
         Position pos = { 5, 2 };
         Velocity vel = { 3 };
 

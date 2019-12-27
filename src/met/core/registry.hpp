@@ -14,14 +14,14 @@ namespace met {
     /**
      * @brief The global data handler and entry point of this library
      */
-    class Registry {
+    class registry {
     public:
-        Registry() : m_lastMaxEntityId(0) {
+        registry() : m_lastMaxEntityId(0) {
             m_componentCollections.reserve(MIN_COMPONENT_TYPES);
             m_tempMatchingEntities.reserve(MIN_ENTITIES);
         }
 
-        ~Registry() {
+        ~registry() {
             for (IComponentCollection* componentCollection : m_componentCollections) {
                 delete componentCollection;
             }

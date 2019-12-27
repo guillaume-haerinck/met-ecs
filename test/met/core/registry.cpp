@@ -6,7 +6,7 @@
 
 SCENARIO("registry is supposed to handle entities and components", "[registry]") {
     GIVEN("An empty registry") {
-        met::Registry registry;
+        met::registry registry;
 
         WHEN("we ask for new entities") {
             met::entity entity1 = registry.create();
