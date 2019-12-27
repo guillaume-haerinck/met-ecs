@@ -49,14 +49,14 @@ SCENARIO("registry is supposed to handle entities and components", "[registry]")
             }
         }
         WHEN("we create 3 entities with a component") {
-            for (size_t i = 0; i < 4; i++) {
+            for (size_t i = 1; i < 4; i++) {
                 met::entity id = registry.create();
                 Position pos = { (float) i, (float) i };
                 registry.assign<Position>(id, pos);
             }
             
             THEN("we should be able to get them back") {
-                unsigned int i = 0;
+                unsigned int i = 1;
                 registry.view<Position>().each([&i](met::entity id, Position pos) {
                     Position checkPos = { (float) i, (float) i };
                     i++;
@@ -70,7 +70,7 @@ SCENARIO("registry is supposed to handle entities and components", "[registry]")
                 registry.destroy(2);
 
                 THEN("it shouldn't affect other entities") {
-                    unsigned int i = 0;
+                    unsigned int i = 1;
                     registry.view<Position>().each([&i](met::entity id, Position pos) {
                         Position checkPos = { (float) i, (float) i };
                         i += 2;
@@ -82,7 +82,7 @@ SCENARIO("registry is supposed to handle entities and components", "[registry]")
             }
         }
         WHEN("we create 3 entities with 2 components each") {
-            for (size_t i = 0; i < 4; i++) {
+            for (size_t i = 1; i < 4; i++) {
                 met::entity id = registry.create();
                 Position pos = { (float) i, (float) i };
                 Velocity vel = { (float) i, (float) i };
@@ -91,7 +91,7 @@ SCENARIO("registry is supposed to handle entities and components", "[registry]")
             }
             
             THEN("we should be able to get them back") {
-                unsigned int i = 0;
+                unsigned int i = 1;
                 registry.view<Position, Velocity>().each([&i](met::entity id, Position pos, Velocity vel) {
                     Position checkPos = { (float) i, (float) i };
                     Velocity checkVel = { (float) i, (float) i };
@@ -109,7 +109,7 @@ SCENARIO("registry is supposed to handle entities and components", "[registry]")
                 registry.destroy(2);
 
                 THEN("it shouldn't affect other entities") {
-                    unsigned int i = 0;
+                    unsigned int i = 1;
                     registry.view<Position, Velocity>().each([&i](met::entity id, Position pos, Velocity vel) {
                         Position checkPos = { (float) i, (float) i };
                         Velocity checkVel = { (float) i, (float) i };

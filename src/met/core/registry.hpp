@@ -157,7 +157,7 @@ namespace met {
         template<typename Comp>
         void fillMatchingEntities() {
             const ComponentCollection<Comp>* collection = getCollection<Comp>();
-            for (entity id = 1; id <= collection->size(); ++id) {
+            for (entity id = 1; id <= collection->capacity(); ++id) {
                 if (collection->has(id)) {
                     m_tempMatchingEntities.push_back(id);
                 }
