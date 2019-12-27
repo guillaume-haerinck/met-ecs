@@ -37,7 +37,6 @@ SCENARIO("Component collections are supposed to handle component storage, deleti
             collection.insert(i, pos);
         }
         
-        // FIXME at 8 it changes the 6 but it shouldn't
         WHEN("we remove half of the components") {
             for (unsigned int i = 2; i < 10; i++) {
                 if (i % 2 == 0)

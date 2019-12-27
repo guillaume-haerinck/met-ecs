@@ -14,7 +14,7 @@ namespace met {
     class IComponentCollection {
     public:
         IComponentCollection() {
-            m_entityToComponentIndex.resize(MIN_ENTITIES);
+            m_sparse.resize(MIN_ENTITIES);
         };
         virtual ~IComponentCollection() {};
 
@@ -22,11 +22,11 @@ namespace met {
          * @brief Check if an entity has the component
          */
         bool has(entity id) const {
-            assert(id != null_entity && "Null entity cannot have components");
+            assert(id != null && "Null entity cannot have components");
 
-            if (id > m_entityToComponentIndex.size()) {
+            if (id > m_sparse.size() - 1) {
                 return false;
-            } else if (m_entityToComponentIndex.at(id) != null_component) {
+            } else if (m_sparse.at(id) != null) {
                 return true;
             } else {
                 return false;
@@ -37,7 +37,7 @@ namespace met {
         virtual size_t size() const = 0;
 
     protected:
-        std::vector<unsigned int> m_entityToComponentIndex;
+        std::vector<unsigned int> m_sparse; // Entity to component index
     };
 
     /**
@@ -47,12 +47,10 @@ namespace met {
     class ComponentCollection : public IComponentCollection {
     public:
         ComponentCollection(entity id, T& component) {
-            m_components.reserve(MIN_ENTITIES);
-            m_componentIndexToEntity.reserve(MIN_ENTITIES);
+            m_dense.reserve(MIN_ENTITIES);
 
             // Unused, allow entity id to match array id
-            m_components.push_back(component);
-            m_componentIndexToEntity.push_back(null_component);
+            m_dense.push_back(component);
 
             // Add first entity
             insert(id, component);
@@ -64,17 +62,16 @@ namespace met {
          * @brief Insert a component to an entity
          */
         void insert(entity id, T& component) {
-            assert(id != null_entity && "Null entity cannot have components");
+            assert(id != null && "Null entity cannot have components");
 
-            if (m_entityToComponentIndex.size() <= id) {
-                m_entityToComponentIndex.resize(id + 10);
-                std::fill(m_entityToComponentIndex.begin() + id, m_entityToComponentIndex.end(), null_component);
+            if (m_sparse.size() <= id) {
+                m_sparse.resize(id + 10);
+                std::fill(m_sparse.begin() + id, m_sparse.end(), null);
             }
 
             // Add a new component at the end of the packed array
-            m_components.push_back(component);
-            m_componentIndexToEntity.push_back(id);
-            m_entityToComponentIndex.at(id) = static_cast<unsigned int>(m_components.size()) - 1;
+            m_dense.push_back(component);
+            m_sparse.at(id) = static_cast<unsigned int>(m_dense.size()) - 1;
         }
 
         /**
@@ -83,39 +80,42 @@ namespace met {
         void remove(entity id) override {
             assert(has(id) && "The entity does not have this component");
 
-            // Fill deleted entity data position with last valid data
-            const unsigned int lastComponentIndex = static_cast<unsigned int>(m_components.size() - 1);
-            at(id) = at(lastComponentIndex);
+            // Move last component to removed component
+            m_dense.at(m_sparse.at(id)) = m_dense.at(m_dense.size() - 1);
+            
+            // Find owner of last component
+            unsigned int lastComponentOwner = null;
+            for (unsigned int i = 0; i < m_sparse.size(); i++) {
+                if (m_sparse.at(i) == m_dense.size() - 1) {
+                    lastComponentOwner = i;
+                    break;
+                }
+            }
 
-            // Gives the new index to the entity which had the last data
-            // FIXME
-            // m_entityToComponentIndex.at(m_componentIndexToEntity.at(lastComponentIndex)) = m_entityToComponentIndex.at(id);
-
-            // Removes unsused data
-            m_entityToComponentIndex.at(id) = null_component;
-            m_components.pop_back();
-            m_componentIndexToEntity.pop_back();
+            // Update ownership of components
+            m_sparse.at(lastComponentOwner) = m_sparse.at(id);
+            m_sparse.at(id) = null;
+            m_dense.pop_back();
         }
 
         /**
          * @brief Get the component of an entity
          */
         T& at(entity id) {
-            assert(id != null_entity && "Null entity cannot have components");
-            return m_components.at(m_entityToComponentIndex.at(id));
+            assert(has(id) && "The entity does not have this component");
+            return m_dense.at(m_sparse.at(id));
         }
 
         /**
          * @brief Get the number of entities which uses this component type
          */
         size_t size() const override {
-            return m_components.size() - 1;
+            return m_dense.size() - 1;
         }
 
         // TODO handle sorting
 
     private:
-        std::vector<unsigned int> m_componentIndexToEntity;
-        std::vector<T> m_components;
+        std::vector<T> m_dense; // Components
     };
 }
