@@ -53,6 +53,17 @@ SCENARIO("Component collections are supposed to handle component storage, deleti
                         REQUIRE(collection.has(i) == false);
                 }
             }
+
+            THEN("the stored data should match what was given") {
+                for (unsigned int i = 2; i < 10; i++) {
+                    if (i % 2 != 0) {
+                        pos = { (float) i, (float) i };
+                        REQUIRE(collection.has(i) == true);
+                        REQUIRE(pos.x == collection.at(i).x);
+                        REQUIRE(pos.y == collection.at(i).y);
+                    }
+                }
+            }
         }
     }
 }

@@ -85,7 +85,7 @@ namespace met {
             
             // Find owner of last component
             unsigned int lastComponentOwner = null;
-            for (unsigned int i = 0; i < m_sparse.size(); i++) {
+            for (unsigned int i = 1; i < m_sparse.size(); i++) {
                 if (m_sparse.at(i) == m_dense.size() - 1) {
                     lastComponentOwner = i;
                     break;
