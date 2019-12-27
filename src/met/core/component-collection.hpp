@@ -84,23 +84,8 @@ namespace met {
          */
         void remove(entity id) override {
             assert(has(id) && "The entity does not have this component");
-
-            // Move last component to removed component
-            m_dense.at(m_sparse.at(id)) = m_dense.at(m_dense.size() - 1);
-            
-            // Find owner of last component
-            unsigned int lastComponentOwner = null;
-            for (unsigned int i = 1; i < m_sparse.size(); i++) {
-                if (m_sparse.at(i) == m_dense.size() - 1) {
-                    lastComponentOwner = i;
-                    break;
-                }
-            }
-
-            // Update ownership of components
-            m_sparse.at(lastComponentOwner) = m_sparse.at(id);
+            // Temp
             m_sparse.at(id) = null;
-            m_dense.pop_back();
         }
 
         /**
@@ -115,7 +100,12 @@ namespace met {
          * @brief Get the number of entities which uses this component type
          */
         size_t size() const override {
-            return m_dense.size() - 1;
+            unsigned int size = 0;
+            for (const auto id : m_sparse) {
+                if (id != null)
+                    size++;
+            }
+            return size;
         }
 
         // TODO handle sorting
