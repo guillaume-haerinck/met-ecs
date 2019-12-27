@@ -48,5 +48,38 @@ SCENARIO("registry is supposed to handle entities and components", "[registry]")
                 REQUIRE(storedPos.y == storedPosCheck.y);
             }
         }
+        WHEN("we create 3 entities with a component") {
+            for (size_t i = 0; i < 4; i++) {
+                met::entity id = registry.create();
+                Position pos = { (float) i, (float) i };
+                registry.assign<Position>(id, pos);
+            }
+            
+            THEN("we should be able to get them back") {
+                unsigned int i = 0;
+                registry.view<Position>().each([&i](met::entity id, Position pos) {
+                    Position checkPos = { (float) i, (float) i };
+                    i++;
+
+                    REQUIRE(pos.x == checkPos.x);
+                    REQUIRE(pos.y == checkPos.y);
+                });
+            }
+
+            AND_WHEN("we delete the 2nd entity") {
+                registry.destroy(2);
+
+                THEN("it shouldn't affect other entities") {
+                    unsigned int i = 0;
+                    registry.view<Position>().each([&i](met::entity id, Position pos) {
+                        Position checkPos = { (float) i, (float) i };
+                        i += 2;
+
+                        REQUIRE(pos.x == checkPos.x);
+                        REQUIRE(pos.y == checkPos.y);
+                    });
+                }
+            }
+        }
     }
 }
