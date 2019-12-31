@@ -19,7 +19,7 @@ Many aspects will be detailled below, and you will find a summary table at the e
 
 #### Data locality
 
-Cache misses. You might have never heard of this term but it is nowadays one of the barebones of your application execution speed. While the calcuation speed of our processors kept getting faster and faster - following [Moore's law](https://en.wikipedia.org/wiki/Moore%27s_law) - the data access time didn't keep up.
+Cache misses. You might have never heard of this term but it is nowadays one of the barebones of your application execution speed. While the execution of our processors kept getting faster and faster - following [Moore's law](https://en.wikipedia.org/wiki/Moore%27s_law) - the data access time didn't keep up.
 
 > Sure, we can _process_ data faster than ever, but we can’t _get_ that data faster. - Bob Nystrom
 
@@ -27,9 +27,34 @@ Cache misses. You might have never heard of this term but it is nowadays one of 
   <img width="700" src="https://raw.githubusercontent.com/guillaume-haerinck/met-ecs/master/docs/post-mortem-img/data-locality-chart.png" alt="Data locality chart"/>
 </p>
 
-*Data locality chart from [Game Programming Patterns](https://gameprogrammingpatterns.com/data-locality.html)*
+*Data speed chart from [Game Programming Patterns](https://gameprogrammingpatterns.com/data-locality.html)*
 
 When the CPU has to read data from the RAM, it takes a lot of time. To prevent this from happening a lot, CPU vendors created **small local memory caches** inside of CPUs. Given their sizes and positions, they are way faster than RAM access. We name these caches by their levels, L1, L2, L3, etc. The smaller is the number, the smaller is the size but faster is the read access.
+
+When processing, if the CPU find the data in the L1 cache, that's a **cache hit**, if it's not there, it's a **cache miss** and it will look on larger but slower memory L2, L3, and after a while the RAM. 
+
+A CPU will fill its memory caches with the data most likely be needed next. This process is called [Data prefetching](https://en.wikipedia.org/wiki/Cache_prefetching) and it's all based on a prediction. Many things are involved to make the best prediction possible, it is a complicated process, but there are [ways](https://medium.com/software-design/why-software-developers-should-care-about-cpu-caches-8da04355bb8a) to improve the "predictability" of our program. 
+
+1. **Sequential access** is the idea to read data in the same order as it is laid out in memory . For exemple if we take an array of size 5 :
+
+```
+SEQUENTIAL ACCESS :
+[1|2|3|4|5] [1|2|3|4|5] [1|2|3|4|5] [1|2|3|4|5] [1|2|3|4|5]
+ ^             ^             ^             ^             ^
+RANDOM ACCESS :
+[1|2|3|4|5] [1|2|3|4|5] [1|2|3|4|5] [1|2|3|4|5] [1|2|3|4|5]
+   ^                 ^   ^               ^               ^
+```
+
+2. **Contiguous data** is the idea that there is no hole or jumps to make when accessing the data. An array of pointers is not supposed to be contiguous for exemple.
+```
+CONTIGUOUS X :
+[x|x|x|x|x|x|x|z|z|...]
+
+NON-CONTIGUOUS X :
+[x|z|x|z|z|x|x|y|a|...]
+```
+These ideas are shaping the concept of  **data locality**, which is a big part of data-oriented design and ECS by extension. When using ECS, the data is always contiguous, and the access tends to be sequential most of the time. Explanation of this fact is on the part IV.
 
 #### Data oriented design
 
