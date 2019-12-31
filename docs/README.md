@@ -58,10 +58,42 @@ These ideas are shaping the concept of  **data locality**, which is a big part o
 
 #### Data oriented design
 
-> When there is one, there is many. XXX
+Data oriented design (DOD) is often opposed to Object-Oriented-Programming (OOP). If you are new to both, do not worry, we will take a look at how OPP typically works for a simple particle-generation app, and then we will see what is a DOD way to do the same thing.
 
-- Performances gain with less cache miss and think about the bulk
-- History of data oriented design and the emergence of ecs
+It will be a summary of this [well written article](http://lucteo.ro/2018/01/04/Data-Oriented-Design-and-efficiency/) by Lucteo on 2018. Similar articles can be found [here](https://nikitablack.github.io/2017/02/02/Data-Oriented-Design-by-example.html), [here](http://aras-p.info/texts/files/2018Academy%20-%20ECS-DoD.pdf) and [here](https://www.gamedev.net/blogs/entry/2265481-oop-is-dead-long-live-oop/).
+
+<p align="center">
+  <img width="700" src="https://raw.githubusercontent.com/guillaume-haerinck/met-ecs/master/docs/post-mortem-img/particles.gif" alt="Data locality chart"/>
+</p>
+
+##### Object oriented
+
+- Schema of the design
+
+##### Data oriented
+
+- Schemo of the design
+
+> When there is one, there is many. - [Aras Pranckevičius](http://aras-p.info/texts/files/2018Academy%20-%20ECS-DoD.pdf), *Unity Training Academy*, 2018
+
+##### Which one performs best ?
+
+<p align="center">
+  <img width="700" src="https://raw.githubusercontent.com/guillaume-haerinck/met-ecs/master/docs/post-mortem-img/particles-performance.png" alt="Data locality chart"/>
+</p>
+
+- Array of structure vs structure of array cache misses
+
+- Know your data, and measure performance before taking actions
+
+> Object oriented programming is not necessarily evil. Be careful not to design yourself into a corner - [Tony Albrecht](http://harmful.cat-v.org/software/OO_programming/_pdf/Pitfalls_of_Object_Oriented_Programming_GCAP_09.pdf), *Pitfalls of OOP*, 2009
+
+About DOD, be warned that there is more it than reducing cache misses. ECS might be a data-oriented way to program, but it's not **the** data-oriented way to program. DOD is a topic that is way to broad to explain here, so I recommend you to have a look at [this blog post](http://blog.s-schoener.com/2019-06-09-data-oriented-design/) by Sebastian Schoner and [this book](http://www.dataorienteddesign.com/dodbook/) by Richard Fabian if you want to know more about this subject.
+
+> The purpose of all programs, and all parts of those programs, is to transform data from one form to another.  
+– [Mike Acton](https://youtu.be/rX0ItVEVjHc?t=753), *CppCon*, 2014
+
+
 
 ### Maintenability
 - Maintenability with separation of data and logic
@@ -70,6 +102,7 @@ These ideas are shaping the concept of  **data locality**, which is a big part o
 ### Portability
 - Reuse systems accross projets
 - Greets the fact that from one app to another easier to understand the structure with ECS
+- But be warned that it might be more difficult to solve problem efficiently when you have an imposed architecture
 
 ### Adoption in the industry
 - Usage in the industry and the future
@@ -129,9 +162,12 @@ These ideas are shaping the concept of  **data locality**, which is a big part o
 | [Awesome list ECS](https://github.com/jslee02/awesome-entity-component-system) | A list of ressources about Entity Component System | Updated frequently |
 | [Awesome list DOD](https://github.com/dbartolini/data-oriented-design) | A list of ressources about Data oriented Design| Updated frequently |
 | [ECS faq](https://github.com/SanderMertens/ecs-faq) | Frequently asked questions about ECS by Sender Mertens | 2019 |
+| [An interpretation of DOD](http://blog.s-schoener.com/2019-06-09-data-oriented-design/) |  A post by Sebastian Schoner looking at DOD and ECS in more deepth than simply avoiding cache misses | 2019 |
 | [ECS - Where are my entities ?](https://skypjack.github.io/2019-03-07-ecs-baf-part-2/) | An article by Skypjack on Sparse set vs Archetypes for component storage | 2019 |
 | [Programming lessons learned from making my first game](https://github.com/adnzzzzZ/blog/issues/31) | Post mortem by adnzzzzZ about why he doesn't recommand ECS for small projects | 2018 |
+| [Data Oriented Design and efficiency](http://lucteo.ro/2018/01/04/Data-Oriented-Design-and-efficiency/) | A post by Lucian Radu Teodorescu where he benchmarks OOP vs DOD for a particle generation program | 2018 |
 | [Simplest ECS](https://blog.therocode.net/2018/08/simplest-entity-component-system) | A very simple and easy to understand ECS implementation by Therocode | 2018 |
+| [Data oriented design book](http://www.dataorienteddesign.com/dodbook/) | A book by Richard Fabian aboute DOD practices | 2018 |
 | [Nomad game engine](https://medium.com/@savas/nomad-game-engine-part-2-ecs-9132829188e5) | Articles about a game engine written in ECS | 2016 |
 | [Sane usage of component and entity systems](https://www.randygaul.net/2014/06/10/sane-usage-of-components-and-entity-systems/) | A blog post by Randy Gaul | 2014 |
 | [Data oriented design](http://gamesfromwithin.com/data-oriented-design) | Explanation of Data oriented design vs OOP by Noel Llopis | 2009 |
@@ -154,7 +190,8 @@ These ideas are shaping the concept of  **data locality**, which is a big part o
 | Link | Description | Date |
 | --- | --- | --- |
 | [GDC - Content fueled gameplay programming in Frostpunk](https://www.gdcvault.com/play/1026275/Content-Fueled-Gameplay-Programming-in) | Slides of the talk by Aleksander Kauch on ECS | 2019 |
-| [Unity Academy - Data oriented design](http://aras-p.info/texts/files/2018Academy%20-%20ECS-DoD.pdf) | Slides of the talk bp Aras Pranckevicius | 2018 |
+| [Unity Academy - Data oriented design](http://aras-p.info/texts/files/2018Academy%20-%20ECS-DoD.pdf) | Slides of the talk by Aras Pranckevicius | 2018 |
+| [TGC - Pitfalls of OOP revisited](https://docs.google.com/presentation/d/1ST3mZgxmxqlpCFkdDhtgw116MQdCr2Fax2yjd8Az6zM/edit?usp=sharing) | A talk by Tony Albrecht, now at Riot Games and previously constultant at Sony, about how to measure performance of your game. It is a new take on [this talk](http://harmful.cat-v.org/software/OO_programming/_pdf/Pitfalls_of_Object_Oriented_Programming_GCAP_09.pdf). | 2017
 | [DICE Coders Day - Intro to Data Oriented Design](https://www.dice.se/news/introduction-data-oriented-design/) | Slides of the talk of Dice | 2010 |
 | [BitSquid - Practical examples in Data Oriented Design](http://bitsquid.blogspot.com/2010/05/practical-examples-in-data-oriented.html) | Slides of the talk by Niklas Frykholm at the Game Developer Forum in Stockholm | 2010 |
 
