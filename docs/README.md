@@ -24,7 +24,7 @@ Cache misses. You might have never heard of this term but it is nowadays one of 
 > Sure, we can _process_ data faster than ever, but we can’t _get_ that data faster. Bob Nystrom
 
 <figure align="center">
-  <img width="700" src="https://github.com/guillaume-haerinck/met-ecs/raw/master/doc/post-mortem-img/data-locality-chart.png?raw=true" alt="Data locality chart" />
+  <img width="700" src="https://github.com/guillaume-haerinck/met-ecs/blob/master/docs/post-mortem-img/data-locality-chart.png" alt="Data locality chart" />
   <figcaption>Data locality chart from <a href="https://gameprogrammingpatterns.com/data-locality.html">Game Programming Patterns</a></figcaption>
 </figure>
 
