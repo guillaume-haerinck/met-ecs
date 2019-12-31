@@ -21,12 +21,13 @@ Many aspects will be detailled below, and you will find a summary table at the e
 
 Cache misses. You might have never heard of this term but it is nowadays one of the barebones of your application execution speed. While the calcuation speed of our processors kept getting faster and faster - following [Moore's law](https://en.wikipedia.org/wiki/Moore%27s_law) - the data access time didn't keep up.
 
-> Sure, we can _process_ data faster than ever, but we can’t _get_ that data faster. Bob Nystrom
+> Sure, we can _process_ data faster than ever, but we can’t _get_ that data faster. - Bob Nystrom
 
-<figure align="center">
-  <img width="700" src="https://github.com/guillaume-haerinck/met-ecs/blob/master/docs/post-mortem-img/data-locality-chart.png" alt="Data locality chart" />
-  <figcaption>Data locality chart from <a href="https://gameprogrammingpatterns.com/data-locality.html">Game Programming Patterns</a></figcaption>
-</figure>
+<p align="center">
+  <img width="700" src="https://raw.githubusercontent.com/guillaume-haerinck/met-ecs/master/docs/post-mortem-img/data-locality-chart.png" alt="Data locality chart"/>
+</p>
+
+*Data locality chart from [Game Programming Patterns](https://gameprogrammingpatterns.com/data-locality.html)*
 
 When the CPU has to read data from the RAM, it takes a lot of time. To prevent this from happening a lot, CPU vendors created **small local memory caches** inside of CPUs. Given their sizes and positions, they are way faster than RAM access. We name these caches by their levels, L1, L2, L3, etc. The smaller is the number, the smaller is the size but faster is the read access.
 
