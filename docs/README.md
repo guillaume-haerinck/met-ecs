@@ -2,20 +2,57 @@
 
 ## Introdution
 
+When I started to work on **Met ECS**, I had [one project](https://github.com/guillaume-haerinck/imac-tower-defense) dealing with Entity Component Systems on my back. At the time I used the [ENTT](https://github.com/skypjack/entt) library by Skypjack to structure my application. As the most popular Open-Source library currently available, it seemed like a great starting point to structure my library and test its performance afterwards.
+
+Through these lines, I will do my best to explain what is ECS, what it stands for and how I implemented this paradigm following the ENTT library API. The code is not the most performant there is, but it is short, and tries to be easy to understand.
+
+If you spot a mistake, or have any comment, you can open an [issue](https://github.com/guillaume-haerinck/met-ecs/issues) on this repository.
+
 ## I - Why ECS ?
 > An explanation of data-oriented practices, their history, advantages and uses in the real world
+
+- Performances gain with less cache miss and think about the bulk
+- Maintenability with separation of data and logic
+- Inheritence problems with oop, or performance
+- History of data oriented design and the emergence of ecs
+- Usage in the industry and the future
+- Warn about getting used to it and problems to reason about static data and unity
+- Greets the fact that from one app to another easier to understand the structure with ECS
 
 ## II - The theory
 > Discover what are entities, component and systems. Understand how they interact together 
 
+- Explain what are components entities and systems
+- Give tangible examples of interaction for a specific behavior
+- Talk about maintenability and easy to add features
+- Difficult to start with and sometimes to prototype as difficult to reason for one entity
+
 ## III - Interacting with ECS
 > What are the possible APIs available to use ECS and what are their advantages
+
+- Registering components vs declaring them in advance
+- Registrering systems or not
+- Using a central registry
+- Examples in the industry
+- The API of met ecs
 
 ## IV - Data structure
 > How the data of ECS is stored and accessed
 
+- Pure array
+- Sparse set
+- Archetypes
+- The sparse set of met ecs
+- The view creation of met ecs
+- The templates tips and tricks
+
 ## V - The case of static data
 > What are the ways to handle the global states of your app like inputs or graphic objects
+
+- Singleton components (outside or inside ECS)
+- Event system
+- Parse files
+- Handle things outside of ECS is common
 
 ## Conclusion
 
@@ -68,4 +105,3 @@
 | Link | Description | Date |
 | --- | --- | --- |
 | [Analysis of ECS](https://www.researchgate.net/publication/305730566_Analysis_of_entity_encoding_techniques_design_and_implementation_of_a_multithreaded_compile-time_Entity-Component-System_C14_library) | A thesis by Vittorio Romeo on ECS implementation| 2016 |
-
