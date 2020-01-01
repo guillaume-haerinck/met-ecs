@@ -4,30 +4,30 @@
 
 [**Introduction**](#introduction)
 
-[**I - Why ECS ?**](#i---why-ecs)
-*	[**Performance**](#performance)
-*  [**Maintenability**](#maintenability)
-* [**Portability**](#portability)
-* [**Adoption in the industry**](#adoption-in-the-industry)
+[**I - Why ECS ?**](#i---why-ecs-)
+*	[**Performance**](#a---performance)
+*  [**Maintenability**](#b---maintenability)
+* [**Portability**](#c---portability)
+* [**Adoption in the industry**](#d---adoption-in-the-industry)
 
 [**II - The theory**](#ii---the-theory)
-*  [**Entities and Components**](#entities-and-components)
-*  [**Systems**](#systems)
-*  [**Inter-System communication**](#inter-system-communication)
+*  [**Entities and Components**](#a---entities-and-components)
+*  [**Systems**](#b---systems)
+*  [**Inter-System communication**](#c---inter-system-communication)
 
 [**III - Interacting with ECS**](#iii---interacting-with-ecs)
-*  [**Shaping and filling Components**](#shaping-and-filling-components)
-*  [**Getting and modifying Components**](#getting-and-modifying-components)
-*  [**Handling singleton Components and Events**](#handling-singleton-components-and-events)
+*  [**Shaping and filling Components**](#a---shaping-and-filling-components)
+*  [**Getting and modifying Components**](#b---getting-and-modifying-components)
+*  [**Handling singleton Components and Events**](#c---handling-singleton-components-and-events)
 
 [**IV - Data structure**](#iv---data-structure)
-*  [**Storing Components**](#storing-components)
-*  [**Handling changes**](#handling-changes)
-*  [**Getting Components in Systems**](#getting-components-in-systems)
+*  [**Storing Components**](#a---storing-components)
+*  [**Handling changes**](#b---handling-changes)
+*  [**Getting Components in Systems**](#c---getting-components-in-systems)
 
 [**Conclusion**](#conclusion)
 
-## Introdution
+## Introduction
 
 When I started to work on **Met ECS**, I had [one project](https://github.com/guillaume-haerinck/imac-tower-defense) dealing with Entity Component Systems on my back. At the time I used the [ENTT](https://github.com/skypjack/entt) library by Skypjack to structure my application. As the most popular Open-Source library currently available, it seemed like a great starting point to structure my library and test its performance afterwards.
 
