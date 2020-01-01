@@ -1,5 +1,32 @@
 # Met ECS post-mortem
 
+## Table of Content
+
+[**Introduction**](#introduction)
+
+[**I - Why ECS ?**](#i---why-ecs)
+*	[**Performance**](#performance)
+*  [**Maintenability**](#maintenability)
+* [**Portability**](#portability)
+* [**Adoption in the industry**](#adoption-in-the-industry)
+
+[**II - The theory**](#ii---the-theory)
+*  [**Entities and Components**](#entities-and-components)
+*  [**Systems**](#systems)
+*  [**Inter-System communication**](#inter-system-communication)
+
+[**III - Interacting with ECS**](#iii---interacting-with-ecs)
+*  [**Shaping and filling Components**](#shaping-and-filling-components)
+*  [**Getting and modifying Components**](#getting-and-modifying-components)
+*  [**Handling singleton Components and Events**](#handling-singleton-components-and-events)
+
+[**IV - Data structure**](#iv---data-structure)
+*  [**Storing Components**](#storing-components)
+*  [**Handling changes**](#handling-changes)
+*  [**Getting Components in Systems**](#getting-components-in-systems)
+
+[**Conclusion**](#conclusion)
+
 ## Introdution
 
 When I started to work on **Met ECS**, I had [one project](https://github.com/guillaume-haerinck/imac-tower-defense) dealing with Entity Component Systems on my back. At the time I used the [ENTT](https://github.com/skypjack/entt) library by Skypjack to structure my application. As the most popular Open-Source library currently available, it seemed like a great starting point to structure my library and test its performance afterwards.
@@ -9,19 +36,23 @@ Through these lines, I will do my best to explain what is ECS, what it stands fo
 If you spot a mistake, or have any comment, you can open an [issue](https://github.com/guillaume-haerinck/met-ecs/issues) on this repository.
 
 ## I - Why ECS ?
-> An explanation of data-oriented practices, their history, advantages and uses in the real world
+> An explanation of data-oriented practices, their advantages, flaws and uses in the real world
 
-There are multiple good reason to use an ECS architecture if you are building a game, or even an application. As any other paradigm, it has it own drawbacks and is **not suited for every need**. To know if it's made for you, you need to *"know your data"*. Where, how, by whom and at which frequency it will be modified. 
+There are multiple good reason to use an ECS architecture if you are building a game, or even an application. As any other paradigm, it has it own drawbacks and is **not suited for every need**. To know if it's made for you, you need to *"know your data"*. Where, how, by whom and at which frequency it will be modified.
 
-Many aspects will be detailled below, and you will find a summary table at the end of this part.
+If you have no idea of what ECS is, please take a quick look at [the explanation on the readme](https://github.com/guillaume-haerinck/met-ecs#what-is-ecs-) as it will help you to undestrand this first part. Many aspects will be detailed below, and you will find a summary table at the end of this part.
 
-### Performance
+___
+
+### A - Performance
+
+One of the first reason that comes in mind when we think about using ECS is getting a good execution time. 
 
 #### Data locality
 
 Cache misses. You might have never heard of this term but it is nowadays one of the barebones of your application execution speed. While the execution of our processors kept getting faster and faster - following [Moore's law](https://en.wikipedia.org/wiki/Moore%27s_law) - the data access time didn't keep up.
 
-> Sure, we can _process_ data faster than ever, but we can’t _get_ that data faster. - Bob Nystrom
+> Sure, we can *process* data faster than ever, but we can’t *get* that data faster. - Bob Nystrom
 
 <p align="center">
   <img width="700" src="https://raw.githubusercontent.com/guillaume-haerinck/met-ecs/master/docs/post-mortem-img/data-locality-chart.png" alt="Data locality chart"/>
@@ -54,7 +85,7 @@ CONTIGUOUS X :
 NON-CONTIGUOUS X :
 [x|z|x|z|z|x|x|y|a|...]
 ```
-These ideas are shaping the concept of  **data locality**, which is a big part of data-oriented design and ECS by extension. When using ECS, the data is always contiguous, and the access tends to be sequential most of the time. Explanation of this fact is on the part IV.
+These ideas are shaping the concept of  [**data locality**](https://gameprogrammingpatterns.com/data-locality.html), which is a big part of data-oriented design and ECS by extension. When using ECS, the data is always contiguous, and the access tends to be sequential most of the time. Explanation of this fact is on the part IV.
 
 #### Data oriented design
 
@@ -78,7 +109,7 @@ For our app, we are showing moving *dots* on the screen, so we will need a class
 
 ##### Data oriented
 
-Witd DOD, we split the data into different classes based on how frequently they are used. The logic is now handled by the World class.
+With DOD, we split the data into different classes based on how frequently they are used. The logic is now handled by the World class.
 
 <p align="center">
   <img width="550" src="https://raw.githubusercontent.com/guillaume-haerinck/met-ecs/master/docs/post-mortem-img/particles-uml-dod.png" alt="Data locality chart"/>
@@ -102,62 +133,138 @@ By applying these steps, we reached the same layout presented by the DOD class d
 
 > Object oriented programming is not necessarily evil. Be careful not to design yourself into a corner - [Tony Albrecht](http://harmful.cat-v.org/software/OO_programming/_pdf/Pitfalls_of_Object_Oriented_Programming_GCAP_09.pdf), *Pitfalls of OOP*, 2009
 
-A problem with OOP is that on larger projects, [classes will always tends end up with unrelated data](https://youtu.be/yy8jQgmhbAU?t=3038), and though breaking a [SOLID](https://itnext.io/solid-principles-explanation-and-examples-715b975dcad4) structure, leading to less performance. We can call it bad engineering but it is just a fact of life.
+A problem with OOP is that on larger projects, [classes tends to end up with unrelated data](https://youtu.be/yy8jQgmhbAU?t=3038), and though breaking a [SOLID](https://itnext.io/solid-principles-explanation-and-examples-715b975dcad4) structure, leading to less performance. We can call it bad engineering but it is just a fact of life.
 
 > The purpose of all programs, and all parts of those programs, is to transform data from one form to another.  
 – [Mike Acton](https://youtu.be/rX0ItVEVjHc?t=753), *CppCon*, 2014
 
-Finally about DOD, be warned that there is more it than reducing cache misses. ECS might be a data-oriented way to program, but it's not **the** data-oriented way to program. DOD is a topic that is way to broad to explain here, so I recommend you to have a look at [this blog post](http://blog.s-schoener.com/2019-06-09-data-oriented-design/) by Sebastian Schoner and [this book](http://www.dataorienteddesign.com/dodbook/) by Richard Fabian if you want to know more about this subject.
+Finally about DOD, be warned that there is more it than reducing cache misses. ECS might be a data-oriented way to program, but it's not **the** data-oriented way to program. DOD is a topic that is way to broad to explain here, so I recommend you to have a look at [this blog post](http://blog.s-schoener.com/2019-06-09-data-oriented-design/) by Sebastian Schoner and [this book](http://www.dataorienteddesign.com/dodbook/) by Richard Fabian if you want to know more about this subject. If you are aching for performance boosts, you might also have a look at [SIMD operations](http://sci.tuomastonteri.fi/programming/sse) and multithreading.
 
-### Maintenability
-- Maintenability with separation of data and logic
-- Inheritence problems with oop, or performance
+___
+### B - Maintenability
+
+In ECS, data and logic are separated. When you are used to OOP, it's a strange step to make, as grouping the two helped to find your way into the code. Doesn't putting related code in separate files and classes will make development comberstone ? No, and we will see why it has a lot of advantages.
+
+#### Finding where data is changed
+
+When you open up an existing codebase, 
+
+- No hiden states
+
+#### Thinking about the masses
 
 > When there is one, there is many. - [Aras Pranckevičius](http://aras-p.info/texts/files/2018Academy%20-%20ECS-DoD.pdf), *Unity Training Academy*, 2018
 
-### Portability
+This can be a problem when prototyping as it is difficult to reason about unity
+
+#### Adding features
+
+- Diamond inheritence problem
+
+#### Testing
+
+Unit tests
+- Output your app data anytime you want
+
+___
+### C - Portability
+
+You know your inputs and your outputs
+
+#### Free functions
+
 - Reuse systems accross projets
+
+#### Similar architecture across projects
+
 - Greets the fact that from one app to another easier to understand the structure with ECS
 - But be warned that it might be more difficult to solve problem efficiently when you have an imposed architecture
 
-### Adoption in the industry
-- Usage in the industry and the future
+___
+### D - Adoption in the industry
+
+Used by AAA games, why they picked ecs for their use cases
+
+#### Overwatch
+
+#### Destiny
+
+#### Frostpunk
+
+#### Unity engine
+
 - Warn about getting used to it and problems to reason about static data and unity
 
 ## II - The theory
 > Discover what are entities, component and systems. Understand how they interact together 
 
-- Explain what are components entities and systems
-- Give tangible examples of interaction for a specific behavior
-- Talk about maintenability and easy to add features
-- Difficult to start with and sometimes to prototype as difficult to reason for one entity
+[Nomad game engine](https://medium.com/@savas/nomad-game-engine-part-2-ecs-9132829188e5)
+
+### A - Entities and Components
+
+- What they are and how they relate to each others
+
+### B - Systems
+
+- How many of them and what they do
+
+### C - Inter-System communication
+
+- Out of ecs question that is worth mentioning
+- Event based with Observer pattern
+- Singleton components check with ifs
 
 ## III - Interacting with ECS
 > What are the possible APIs available to use ECS and what are their advantages
 
+Pick different approaches
+___
+### A - Shaping and filling Components
+
 - Registering components vs declaring them in advance
+- Using external files
+
+___
+### B - Getting and modifying Components
+
 - Registrering systems or not
 - Using a central registry
 - Examples in the industry
 - The API of met ecs
 
+___
+### C - Handling singleton Components and Events
+
+- How to handle static data inside of ecs
+- Unity GetSingletonComponent API
+- Overwatch singleton components
+- ENTT event classes
+- The beast voxel editor friend class approach
+- Handle things outside of ECS is common (GUI, inputs, etc)
+
 ## IV - Data structure
-> How the data of ECS is stored and accessed
+> How the data of ECS is stored and accessed. Everything there is to know about Met ECS inner working.
+
+___
+### A - Storing Components
 
 - Pure array
 - Sparse set
 - Archetypes
 - The sparse set of met ecs
+- Templates
+
+___
+### B - Handling changes
+
+- Sorting
+- Deletion
+
+___
+### C - Getting Components in Systems
+
 - The view creation of met ecs
 - The templates tips and tricks
-
-## V - The case of static data
-> What are the ways to handle the global states of your app like inputs or graphic objects
-
-- Singleton components (outside or inside ECS)
-- Event system
-- Parse files
-- Handle things outside of ECS is common
 
 ## Conclusion
 
