@@ -60,7 +60,7 @@ These ideas are shaping the concept of  **data locality**, which is a big part o
 
 Data oriented design (DOD) is often opposed to Object-Oriented-Programming (OOP). If you are new to both, do not worry, we will take a look at how OPP typically works for a simple particle-generation app, and then we will see what is a DOD way to do the same thing.
 
-It will be a summary of this [well written article](http://lucteo.ro/2018/01/04/Data-Oriented-Design-and-efficiency/) by Lucteo on 2018. Similar articles can be found [here](https://nikitablack.github.io/2017/02/02/Data-Oriented-Design-by-example.html), [here](http://aras-p.info/texts/files/2018Academy%20-%20ECS-DoD.pdf) and [here](https://www.gamedev.net/blogs/entry/2265481-oop-is-dead-long-live-oop/).
+It will be a summary of this [well written article](http://lucteo.ro/2018/01/04/Data-Oriented-Design-and-efficiency/) by Lucteo on 2018. Similar articles can be found [here](https://nikitablack.github.io/2017/02/02/Data-Oriented-Design-by-example.html), [here](http://aras-p.info/texts/files/2018Academy%20-%20ECS-DoD.pdf) and [here](https://www.gamedev.net/blogs/entry/2265481-oop-is-dead-long-live-oop/). They offers various viewpoints on the famous OOP vs DOD debate are worth looking into. The takeways from them can be found on conclusion of this part.
 
 <p align="center">
   <img width="700" src="https://raw.githubusercontent.com/guillaume-haerinck/met-ecs/master/docs/post-mortem-img/particles.gif" alt="Data locality chart"/>
@@ -68,36 +68,52 @@ It will be a summary of this [well written article](http://lucteo.ro/2018/01/04/
 
 ##### Object oriented
 
-- Schema of the design
+With OOP, we put both data and the logic to process it into the same class. The code can mimics a real life behavior, making the code easy to model and to understand for programmers. 
+
+For our app, we are showing moving *dots* on the screen, so we will need a class for the dots, and a class for the *world* to put them in. We might add squares or circles to draw in the future, so we make dot inherits an abstract class *IGameObject* which will be the one stored by the world.
+
+<p align="center">
+  <img width="450" src="https://raw.githubusercontent.com/guillaume-haerinck/met-ecs/master/docs/post-mortem-img/particles-uml-oop.png" alt="Data locality chart"/>
+</p>
 
 ##### Data oriented
 
-- Schemo of the design
+Witd DOD, we split the data into different classes based on how frequently they are used. The logic is now handled by the World class.
 
-> When there is one, there is many. - [Aras Pranckevičius](http://aras-p.info/texts/files/2018Academy%20-%20ECS-DoD.pdf), *Unity Training Academy*, 2018
+<p align="center">
+  <img width="550" src="https://raw.githubusercontent.com/guillaume-haerinck/met-ecs/master/docs/post-mortem-img/particles-uml-dod.png" alt="Data locality chart"/>
+</p>
 
 ##### Which one performs best ?
 
+The DOD approach wins by far in terms of performance ([code is available here](https://github.com/lucteo/DOD_samples/tree/master/gameobject)). Not because OOP is inherently wrong, but because our approach to OOP is flawed for this use-case. To understand why DOD is faster, we need to understand why OOP is so slow here and how we can improve it.
+
 <p align="center">
-  <img width="700" src="https://raw.githubusercontent.com/guillaume-haerinck/met-ecs/master/docs/post-mortem-img/particles-performance.png" alt="Data locality chart"/>
+  <img width="550" src="https://raw.githubusercontent.com/guillaume-haerinck/met-ecs/master/docs/post-mortem-img/particles-performance.png" alt="Data locality chart"/>
 </p>
 
-- Array of structure vs structure of array cache misses
+| Step | Problem description |  Fix description |
+| --- | --- | --- |
+| OOP flat | We store an array of *IGameObject**. They are pointers and they are not contiguous in memory, causing cache misses | Removing the *IGameObject* class allows you to store Dots without using pointers |
+| Split struct | The Dot objects contains data that is not used as frequently as position and velocity which reduces the cache efficiency | Move the cold data used by Dot to another class |
+| Split objects | Dots are all updated but some of them are not in sight | Sort the array of Dots by their position and stops to render when one Dot is out of sight |
 
-- Know your data, and measure performance before taking actions
+By applying these steps, we reached the same layout presented by the DOD class diagram, and the exact same performances. The takeaway from this is that the right awnser depends on the situation, instead of looking at the most logical way to structure our OPP classes, we should have looked directly at how it is going to be used and have structured our app this way directly.
 
 > Object oriented programming is not necessarily evil. Be careful not to design yourself into a corner - [Tony Albrecht](http://harmful.cat-v.org/software/OO_programming/_pdf/Pitfalls_of_Object_Oriented_Programming_GCAP_09.pdf), *Pitfalls of OOP*, 2009
 
-About DOD, be warned that there is more it than reducing cache misses. ECS might be a data-oriented way to program, but it's not **the** data-oriented way to program. DOD is a topic that is way to broad to explain here, so I recommend you to have a look at [this blog post](http://blog.s-schoener.com/2019-06-09-data-oriented-design/) by Sebastian Schoner and [this book](http://www.dataorienteddesign.com/dodbook/) by Richard Fabian if you want to know more about this subject.
+A problem with OOP is that on larger projects, [classes will always tends end up with unrelated data](https://youtu.be/yy8jQgmhbAU?t=3038), and though breaking a [SOLID](https://itnext.io/solid-principles-explanation-and-examples-715b975dcad4) structure, leading to less performance. We can call it bad engineering but it is just a fact of life.
 
 > The purpose of all programs, and all parts of those programs, is to transform data from one form to another.  
 – [Mike Acton](https://youtu.be/rX0ItVEVjHc?t=753), *CppCon*, 2014
 
-
+Finally about DOD, be warned that there is more it than reducing cache misses. ECS might be a data-oriented way to program, but it's not **the** data-oriented way to program. DOD is a topic that is way to broad to explain here, so I recommend you to have a look at [this blog post](http://blog.s-schoener.com/2019-06-09-data-oriented-design/) by Sebastian Schoner and [this book](http://www.dataorienteddesign.com/dodbook/) by Richard Fabian if you want to know more about this subject.
 
 ### Maintenability
 - Maintenability with separation of data and logic
 - Inheritence problems with oop, or performance
+
+> When there is one, there is many. - [Aras Pranckevičius](http://aras-p.info/texts/files/2018Academy%20-%20ECS-DoD.pdf), *Unity Training Academy*, 2018
 
 ### Portability
 - Reuse systems accross projets
