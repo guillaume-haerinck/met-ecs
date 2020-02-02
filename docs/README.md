@@ -285,6 +285,7 @@ ___
 | [Awesome list ECS](https://github.com/jslee02/awesome-entity-component-system) | A list of ressources about Entity Component System | Updated frequently |
 | [Awesome list DOD](https://github.com/dbartolini/data-oriented-design) | A list of ressources about Data oriented Design| Updated frequently |
 | [ECS faq](https://github.com/SanderMertens/ecs-faq) | Frequently asked questions about ECS by Sender Mertens | 2019 |
+| [Task-Based Programming](https://software.intel.com/en-us/node/506100) | Intel article about parallel computing using load balancing (opposed to and more efficient than System-on-A-Thread) | 2019
 | [An interpretation of DOD](http://blog.s-schoener.com/2019-06-09-data-oriented-design/) |  A post by Sebastian Schoner looking at DOD and ECS in more deepth than simply avoiding cache misses | 2019 |
 | [ECS - Where are my entities ?](https://skypjack.github.io/2019-03-07-ecs-baf-part-2/) | An article by Skypjack on Sparse set vs Archetypes for component storage | 2019 |
 | [Programming lessons learned from making my first game](https://github.com/adnzzzzZ/blog/issues/31) | Post mortem by adnzzzzZ about why he doesn't recommand ECS for small projects | 2018 |
@@ -293,6 +294,7 @@ ___
 | [Data oriented design book](http://www.dataorienteddesign.com/dodbook/) | A book by Richard Fabian aboute DOD practices | 2018 |
 | [Nomad game engine](https://medium.com/@savas/nomad-game-engine-part-2-ecs-9132829188e5) | Articles about a game engine written in ECS | 2016 |
 | [Sane usage of component and entity systems](https://www.randygaul.net/2014/06/10/sane-usage-of-components-and-entity-systems/) | A blog post by Randy Gaul | 2014 |
+| [Load Balancing Between Threads](https://software.intel.com/en-us/articles/load-balancing-between-threads) | Intel article by Andrew Binstock about efficient parallel computing | 2011
 | [Data oriented design](http://gamesfromwithin.com/data-oriented-design) | Explanation of Data oriented design vs OOP by Noel Llopis | 2009 |
 
  
@@ -305,7 +307,7 @@ ___
 | [CppCon - OOP Is Dead, Long Live Data-oriented Design](https://www.youtube.com/watch?v=yy8jQgmhbAU) | A talk by Stoyan Nikolov on its work at Coherent Labs about re-coding WebKit in data-oriented manner | 2018 |
 | [Intro to ECS](https://www.youtube.com/watch?v=WLfhUKp2gag) | An official Unity video about their ECS implementation | 2018 |
 | [GDC - Overwatch Gameplay Architecture and Netcode](https://www.youtube.com/watch?v=W3aieHjyNvw) | A talk by Timothy Ford on ECS and their concept of Singleton Components | 2017 |
-| [GDC - Destiny's Multithreaded Rendering Architecture](https://www.youtube.com/watch?v=0nTDFLMLX9k) | A talk by Natalya Tatarchuk about data driven-architecture for rendering in their game Destiny | 2015 |
+| [GDC - Destiny's Multithreaded Rendering Architecture](https://www.youtube.com/watch?v=0nTDFLMLX9k) | A talk by Natalya Tatarchuk about parrallel data driven-architecture for rendering in their game Destiny. Slides are available [here](http://advances.realtimerendering.com/destiny/gdc_2015/Tatarchuk_GDC_2015__Destiny_Renderer_web.pdf) | 2015 |
 | [CppCon - Data oriented design and C++](https://www.youtube.com/watch?v=rX0ItVEVjHc) | A talk by Mike Aton (previously at Insomniac Games and now Working at Unity), about Data oriented design | 2014 |
 
 ### Slides
