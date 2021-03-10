@@ -309,6 +309,7 @@ ___
 | [GDC - Overwatch Gameplay Architecture and Netcode](https://www.youtube.com/watch?v=W3aieHjyNvw) | A talk by Timothy Ford on ECS and their concept of Singleton Components | 2017 |
 | [GDC - Destiny's Multithreaded Rendering Architecture](https://www.youtube.com/watch?v=0nTDFLMLX9k) | A talk by Natalya Tatarchuk about parrallel data driven-architecture for rendering in their game Destiny. Slides are available [here](http://advances.realtimerendering.com/destiny/gdc_2015/Tatarchuk_GDC_2015__Destiny_Renderer_web.pdf) | 2015 |
 | [CppCon - Data oriented design and C++](https://www.youtube.com/watch?v=rX0ItVEVjHc) | A talk by Mike Aton (previously at Insomniac Games and now Working at Unity), about Data oriented design | 2014 |
+| [Speeding up Game Logic in unreal Engine - Unreal Fest 2020](https://www.youtube.com/watch?v=QlKXPBFh5BM&list=PLZlv_N0_O1gZ4LHrX8orVNn3LFq_O3-Lm&index=13) | A talk by Daniel Rätzer on their implementation of ECS in Unreal engine for the game Conan Exile | 2020 |
 
 ### Slides
 
